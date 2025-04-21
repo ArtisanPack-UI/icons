@@ -1,0 +1,19 @@
+{
+    "name": "icons",
+    "version": "1.0.0",
+    "description": "placeholder description",
+    "license": "ISC",
+    "author": "",
+    "type": "module",
+    "directories": {
+        "test": "tests"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "node ./scripts/buildIcons.js"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "^6.7.2",
+        "move-file": "^3.1.0"
+    }
+}

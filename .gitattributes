@@ -9,3 +9,5 @@
 /src/**/Test.php    export-ignore
 /phpunit.xml   export-ignore
 /.gitlab-ci.yml export-ignore
+/package.json export-ignore
+/package-lock.json export-ignore
