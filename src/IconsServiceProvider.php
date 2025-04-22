@@ -17,8 +17,12 @@ class IconsServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->publishes( [
+            __DIR__ . '../dist/css/all.css' => public_path( 'vendor/digitalshopfront/icons' ),
+        ], 'public' );
+
         Blade::directive( 'dsIcons', function ( $expression ) {
-            return '<link rel="stylesheet" href="/vendor/digital-shopfront/icons/dist/css/all.css">';
+            return '<link href="' . asset( 'vendor/digitalshopfront/icons' ) . '" rel="stylesheet">';
         } );
     }
 }
