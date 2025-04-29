@@ -25,7 +25,9 @@
     ],
     "require": {
         "php": "^8.2",
-        "illuminate/support": ">=5.3"
+        "illuminate/support": ">=5.3",
+        "tormjens/eventy": "^0.8.0",
+        "ext-fileinfo": "*"
     },
     "require-dev": {
         "pestphp/pest": "^3.8",

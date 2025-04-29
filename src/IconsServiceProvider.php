@@ -3,6 +3,7 @@
 namespace Digitalshopfront\Icons;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class IconsServiceProvider extends ServiceProvider
@@ -17,20 +18,102 @@ class IconsServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        $this->publishes( [
-            __DIR__ . '/../dist/css/all.css'                       => public_path( 'vendor/digitalshopfront/icons/css/all.css' ),
-            __DIR__ . '/../dist/webfonts/fa-brands-400.ttf'        => public_path( 'vendor/digitalshopfront/icons/webfonts/fa-brands-400.ttf' ),
-            __DIR__ . '/../dist/webfonts/fa-brands-400.woff2'      => public_path( 'vendor/digitalshopfront/icons/webfonts/fa-brands-400.woff2' ),
-            __DIR__ . '/../dist/webfonts/fa-regular-400.ttf'       => public_path( 'vendor/digitalshopfront/icons/webfonts/fa-regular-400.ttf' ),
-            __DIR__ . '/../dist/webfonts/fa-regular-400.woff2'     => public_path( 'vendor/digitalshopfront/icons/webfonts/fa-regular-400.woff2' ),
-            __DIR__ . '/../dist/webfonts/fa-solid-900.ttf'         => public_path( 'vendor/digitalshopfront/icons/webfonts/fa-solid-400.ttf' ),
-            __DIR__ . '/../dist/webfonts/fa-solid-900.woff2'       => public_path( 'vendor/digitalshopfront/icons/webfonts/fa-solid-900.woff2' ),
-            __DIR__ . '/../dist/webfonts/fa-v4compatibility.ttf'   => public_path( 'vendor/digitalshopfront/icons/webfonts/fa-v4compatibility.ttf' ),
-            __DIR__ . '/../dist/webfonts/fa-v4compatibility.woff2' => public_path( 'vendor/digitalshopfront/icons/webfonts/fa-v4compatibility.woff2' ),
-        ], 'public' );
+        Route::get( '/digital-shopfront-package-assets/{vendor}/{package}/{path}', function ( $vendor, $package, $path ) {
+            $packagePath = base_path( "vendor/{$vendor}/{$package}/" );
+            $fullPath    = realpath( $packagePath . $path );
+
+            /**
+             * For development purposes
+             */
+            if ( strpos( $fullPath, '/packages/digital-shopfront/' ) !== false ) {
+                $hasCorrectPate = strpos( $fullPath, '/packages/digital-shopfront/icons/' ) !== false;
+            } else {
+                $hasCorrectPate = strpos( $fullPath, $packagePath ) === 0;
+            }
+
+            if ( $fullPath !== false && $hasCorrectPate && is_file( $fullPath ) ) {
+                $mime = $this->mime_content_type( $fullPath );
+                return response()->file( $fullPath, [ 'Content-Type' => $mime ] );
+            }
+
+            abort( 404 );
+        } )->where( 'path', '.*' );
 
         Blade::directive( 'dsIcons', function ( $expression ) {
-            return '<link href="' . asset( 'vendor/digitalshopfront/icons/css/all.css' ) . '" rel="stylesheet">';
+            return '<link href="' . url( '/digital-shopfront-package-assets/digitalshopfront/icons/dist/css/all.css' ) . '" rel="stylesheet">';
         } );
+    }
+
+    public function mime_content_type( $filename )
+    {
+
+        $mime_types = array(
+
+            'txt'  => 'text/plain',
+            'htm'  => 'text/html',
+            'html' => 'text/html',
+            'php'  => 'text/html',
+            'css'  => 'text/css',
+            'js'   => 'application/javascript',
+            'json' => 'application/json',
+            'xml'  => 'application/xml',
+            'swf'  => 'application/x-shockwave-flash',
+            'flv'  => 'video/x-flv',
+
+            // images
+            'png'  => 'image/png',
+            'jpe'  => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg'  => 'image/jpeg',
+            'gif'  => 'image/gif',
+            'bmp'  => 'image/bmp',
+            'ico'  => 'image/vnd.microsoft.icon',
+            'tiff' => 'image/tiff',
+            'tif'  => 'image/tiff',
+            'svg'  => 'image/svg+xml',
+            'svgz' => 'image/svg+xml',
+
+            // archives
+            'zip'  => 'application/zip',
+            'rar'  => 'application/x-rar-compressed',
+            'exe'  => 'application/x-msdownload',
+            'msi'  => 'application/x-msdownload',
+            'cab'  => 'application/vnd.ms-cab-compressed',
+
+            // audio/video
+            'mp3'  => 'audio/mpeg',
+            'qt'   => 'video/quicktime',
+            'mov'  => 'video/quicktime',
+
+            // adobe
+            'pdf'  => 'application/pdf',
+            'psd'  => 'image/vnd.adobe.photoshop',
+            'ai'   => 'application/postscript',
+            'eps'  => 'application/postscript',
+            'ps'   => 'application/postscript',
+
+            // ms office
+            'doc'  => 'application/msword',
+            'rtf'  => 'application/rtf',
+            'xls'  => 'application/vnd.ms-excel',
+            'ppt'  => 'application/vnd.ms-powerpoint',
+
+            // open office
+            'odt'  => 'application/vnd.oasis.opendocument.text',
+            'ods'  => 'application/vnd.oasis.opendocument.spreadsheet',
+        );
+
+        $filenameArray = explode( '.', $filename );
+        $ext           = strtolower( array_pop( $filenameArray ) );
+        if ( array_key_exists( $ext, $mime_types ) ) {
+            return $mime_types[ $ext ];
+        } elseif ( function_exists( 'finfo_open' ) ) {
+            $finfo    = finfo_open( FILEINFO_MIME );
+            $mimetype = finfo_file( $finfo, $filename );
+            finfo_close( $finfo );
+            return $mimetype;
+        } else {
+            return 'application/octet-stream';
+        }
     }
 }
