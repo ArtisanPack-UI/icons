@@ -2,7 +2,9 @@
 
 namespace Digitalshopfront\Icons;
 
-use TorMorten\Eventy\Facades\Eventy;
+use TorMorten\Eventy\Events;
+use TorMorten\Eventy\Filter;
+use TorMorten\Eventy\Facades\Events as Eventy;
 
 class Icons
 {
@@ -14,7 +16,11 @@ class Icons
         if ( !empty( $args ) ) {
             foreach ( $args as $key => $arg ) {
                 $icons = array_filter( $icons, function ( $icon ) use ( $arg, $key ) {
-                    return $icon[ $key ] === $arg || in_array( $arg, $icon[ $key ] );
+                    if ( is_array( $arg ) ) {
+                        return in_array( $arg, $icon[ $key ] );
+                    } else {
+                        return $icon[ $key ] === $arg;
+                    }
                 } );
             }
         }
@@ -17247,7 +17253,7 @@ class Icons
             ],
         ];
 
-        return Eventy::filter( 'ds.icons.iconsList', $icons );
+        return ( new Events() )->filter( 'ds.icons.iconsList', $icons );
     }
 
 }
