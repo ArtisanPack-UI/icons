@@ -2,9 +2,15 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Digitalshopfront\Icons\IconsServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
-abstract class TestCase extends BaseTestCase
+class TestCase extends Orchestra
 {
-    //
+    protected function getPackageProviders( $app )
+    {
+        return [
+            IconsServiceProvider::class,
+        ];
+    }
 }
