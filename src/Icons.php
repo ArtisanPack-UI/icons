@@ -9,6 +9,16 @@ use TorMorten\Eventy\Facades\Events as Eventy;
 class Icons
 {
 
+    /**
+     * Retrieves a filtered list of icons based on the provided arguments.
+     *
+     * @param array $args An associative array of criteria to filter the icons.
+     *                    The keys represent the icon properties, and the values
+     *                    represent the filter conditions. If a value is an array,
+     *                    the method checks for inclusion; otherwise, it checks for equality.
+     * @return array An array of icons that match the specified filtering criteria.
+     * @since 1.0.0
+     */
     public function getIcons( $args = [] ): array
     {
         $icons = $this->iconsList();
@@ -28,6 +38,18 @@ class Icons
         return $icons;
     }
 
+    /**
+     * Retrieves a predefined list of icons with their associated properties.
+     * Each icon includes details such as the name, icon identifier, category,
+     * and supported types.
+     *
+     * @return array An array of associative arrays, where each associative array contains:
+     *               - 'name': The friendly name of the icon.
+     *               - 'icon': The identifier of the icon.
+     *               - 'category': The category classification of the icon.
+     *               - 'type': An array of types (e.g., 'solid', 'regular') indicating the styles associated with the icon.
+     * @since 1.0.0
+     */
     public function iconsList(): array
     {
         $icons = [

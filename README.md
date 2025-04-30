@@ -1,20 +1,26 @@
-# Digital Shopfront CMS Accessibility
+# Digital Shopfront CMS Icons
 
-Description
+This package provides a set of icons for use in the Digital Shopfront CMS as well as a way for developers to add their own icons and to call them based on category and type.
 
 ## Installation
 
-You can install the <name> package by running the following composer command.
+You can install the package by running the following composer command.
 
-`composer require digitalshopfront/<name>`
+`composer require digitalshopfront/icons`
 
 ## Usage
 
-You can use any of the <package> functions like this:
+You can use any of the icon functions like this:
 
 ```
-Example Here
+use Digitalshopfront\Icons\Facades\Icons as Icons;
+
+echo Icons::getIcons();
 ```
+
+You can also call any of the functions directly like this:
+
+`echo getIcons();`
 
 ## Contributing
 
