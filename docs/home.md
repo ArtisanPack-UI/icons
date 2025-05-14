@@ -3,7 +3,7 @@ The Digital Shopfront CMS Accessibility package provides a set of icons for use 
 You can use the functions in this package through the Facade or by directly calling the functions.
 
 ```
-use Digitalshopfront\Icons\Facades\Icons as Icons;
+use ArtisanPackUI\Icons\Facades\Icons as Icons;
 
 echo Icons::getIcons();
 ```

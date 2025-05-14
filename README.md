@@ -13,7 +13,7 @@ You can install the package by running the following composer command.
 You can use any of the icon functions like this:
 
 ```
-use Digitalshopfront\Icons\Facades\Icons as Icons;
+use ArtisanPackUI\Icons\Facades\Icons as Icons;
 
 echo Icons::getIcons();
 ```

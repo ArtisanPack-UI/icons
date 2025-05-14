@@ -1,55 +1,55 @@
 {
-    "name": "digitalshopfront/icons",
-    "description": "This package provides a set of icons for use in the Digital Shopfront CMS as well as a way for developers to add their own icons and to call them based on category and type.",
-    "type": "library",
-    "license": "GPL-3.0-or-later",
-    "version": "1.0.0",
-    "autoload": {
-        "psr-4": {
-            "Digitalshopfront\\Icons\\": "src/"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+  "name": "artisanpack-ui/icons",
+  "description": "This package provides a set of icons for use in the Digital Shopfront CMS as well as a way for developers to add their own icons and to call them based on category and type.",
+  "type": "library",
+  "license": "GPL-3.0-or-later",
+  "version": "1.0.0",
+  "autoload": {
+    "psr-4": {
+      "ArtisanPackUI\\Icons\\": "src/"
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Jacob Martella",
-            "email": "me@jacobmartella.com"
-        }
-    ],
-    "require": {
-        "php": "^8.2",
-        "illuminate/support": ">=5.3",
-        "tormjens/eventy": "^0.8.0",
-        "ext-fileinfo": "*"
-    },
-    "require-dev": {
-        "pestphp/pest": "^3.8",
-        "pestphp/pest-plugin-laravel": "^3.1",
-        "orchestra/testbench": "^10.2"
-    },
-    "config": {
-        "allow-plugins": {
-            "pestphp/pest-plugin": true
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Digitalshopfront\\Icons\\IconsServiceProvider"
-            ],
-            "aliases": {
-                "Package": "Digitalshopfront\\Icons\\Facades\\Icons"
-            }
-        }
-    },
-    "scripts": {
-        "test": "vendor/bin/pest"
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tests\\": "tests/"
     }
+  },
+  "authors": [
+    {
+      "name": "Jacob Martella",
+      "email": "me@jacobmartella.com"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "illuminate/support": ">=5.3",
+    "tormjens/eventy": "^0.9.4",
+    "ext-fileinfo": "*"
+  },
+  "require-dev": {
+    "pestphp/pest": "^3.8",
+    "pestphp/pest-plugin-laravel": "^3.1",
+    "orchestra/testbench": "^10.2"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "ArtisanPackUI\\Icons\\IconsServiceProvider"
+      ],
+      "aliases": {
+        "Package": "ArtisanPackUI\\Icons\\Facades\\Icons"
+      }
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/pest"
+  }
 }

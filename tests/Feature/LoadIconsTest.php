@@ -1,6 +1,6 @@
 <?php
 
-use Digitalshopfront\Icons\Icons;
+use ArtisanPackUI\Icons\Icons;
 
 it( 'returns icon array', function () {
 	$iconsClass = new Icons();
