@@ -12,4 +12,4 @@ echo Icons::getIcons();
 
 ## Table of Contents
 
-* [Functions](https://gitlab.com/jacob-martella-web-design/digital-shopfront/digital-shopfront-packages/digital-shopfront-cms-icons/-/wikis/home/functions)
+* [Functions](https://gitlab.com/jacob-martella-web-design/artisanpack-ui/artisanpack-ui-icons/-/wikis/home/functions)

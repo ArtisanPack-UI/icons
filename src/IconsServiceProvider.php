@@ -18,20 +18,15 @@ class IconsServiceProvider extends ServiceProvider
 
 	public function boot(): void
 	{
-		Route::get( '/digital-shopfront-package-assets/{vendor}/{package}/{path}', function ( $vendor, $package, $path ) {
+		Route::get( '/artisanpack-ui-package-assets/{vendor}/{package}/{path}', function ( $vendor, $package, $path ) {
 			$packagePath = base_path( "vendor/{$vendor}/{$package}/" );
 			$fullPath    = realpath( $packagePath . $path );
-
+			;
 			/**
 			 * For development purposes
 			 */
-			if ( strpos( $fullPath, '/packages/digital-shopfront/' ) !== false ) {
-				$hasCorrectPate = strpos( $fullPath, '/packages/digital-shopfront/icons/' ) !== false;
-			} else {
-				$hasCorrectPate = strpos( $fullPath, $packagePath ) === 0;
-			}
 
-			if ( $fullPath !== false && $hasCorrectPate && is_file( $fullPath ) ) {
+			if ( $fullPath !== false && is_file( $fullPath ) ) {
 				$mime = $this->mime_content_type( $fullPath );
 				return response()->file( $fullPath, [ 'Content-Type' => $mime ] );
 			}
@@ -39,8 +34,8 @@ class IconsServiceProvider extends ServiceProvider
 			abort( 404 );
 		} )->where( 'path', '.*' );
 
-		Blade::directive( 'dsIcons', function ( $expression ) {
-			return '<link href="' . url( '/digital-shopfront-package-assets/digitalshopfront/icons/dist/css/all.css' ) . '" rel="stylesheet">';
+		Blade::directive( 'apIcons', function ( $expression ) {
+			return '<link href="' . url( '/artisanpack-ui-package-assets/artisanpack-ui/icons/dist/css/all.css' ) . '" rel="stylesheet">';
 		} );
 	}
 

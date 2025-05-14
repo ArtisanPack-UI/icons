@@ -1,5 +1,9 @@
 # ArtisanPack UI Icon Changelog
 
+## 1.0.4 - May 14, 2025
+
+- Fixed errors found while renaming the vendor.
+
 ## 1.0.3 - May 14, 2025
 
 * Corrected the version number in the composer.json file.

@@ -4,7 +4,7 @@
 
 * [ ] Have you followed the guidelines in our Contributing document?
 * [ ] Have you checked to ensure there aren't other
-  open [Merge Requests](https://gitlab.com/jacob-martella-web-design/digital-shopfront/digital-shopfront-core/digital-shopfront/-/merge_requests)
+  open [Merge Requests](https://gitlab.com/jacob-martella-web-design/artisanpack-ui/artisanpack-ui-icons/-/merge_requests)
   for the same update/change?
 * [ ] Your changes pass accessibility Tests
 * [ ] Does your submission pass tests?
