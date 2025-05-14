@@ -3,7 +3,7 @@
   "description": "This package provides a set of icons for use in the Digital Shopfront CMS as well as a way for developers to add their own icons and to call them based on category and type.",
   "type": "library",
   "license": "GPL-3.0-or-later",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "autoload": {
     "psr-4": {
       "ArtisanPackUI\\Icons\\": "src/"
