@@ -1,12 +1,12 @@
-# Digital Shopfront CMS Icons
+# ArtisanPack UI Icons
 
-This package provides a set of icons for use in the Digital Shopfront CMS as well as a way for developers to add their own icons and to call them based on category and type.
+This package provides a set of icons for use in the ArtisanPack UI as well as a way for developers to add their own icons and to call them based on category and type.
 
 ## Installation
 
 You can install the package by running the following composer command.
 
-`composer require digitalshopfront/icons`
+`composer require artisanpack-ui/icons`
 
 ## Usage
 
