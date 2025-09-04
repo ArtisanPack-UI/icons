@@ -13,3 +13,4 @@ echo Icons::getIcons();
 ## Table of Contents
 
 * [Functions](https://gitlab.com/jacob-martella-web-design/artisanpack-ui/artisanpack-ui-icons/-/wikis/home/functions)
+* [AI Guidelines](https://gitlab.com/jacob-martella-web-design/artisanpack-ui/artisanpack-ui-icons/-/wikis/home/ai-guidelines)
