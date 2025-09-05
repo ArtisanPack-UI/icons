@@ -1,3 +1,9 @@
+---
+title: Functions
+---
+
+# Functions
+
 Here are the icon functions you can use with this package.
 
 ## getIcons( $args = [] )
