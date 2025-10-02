@@ -27,7 +27,8 @@
     "php": "^8.2",
     "illuminate/support": ">=5.3",
     "tormjens/eventy": "^0.9.4",
-    "ext-fileinfo": "*"
+    "ext-fileinfo": "*",
+    "artisanpack-ui/core": "^1.0"
   },
   "require-dev": {
     "pestphp/pest": "^3.8",
