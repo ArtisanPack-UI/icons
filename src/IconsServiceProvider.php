@@ -14,65 +14,54 @@ namespace ArtisanPackUI\Icons;
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
 use BladeUI\Icons\Factory;
 use Illuminate\Support\ServiceProvider;
-use TorMorten\Eventy\Facades\Eventy;
 
-/**
- * Registers and bootstraps the Icons package.
- *
- * @since 2.0.0
- */
-class IconsServiceProvider extends ServiceProvider {
+class IconsServiceProvider extends ServiceProvider
+{
 
-	/**
-	 * Bootstrap any application services.
-	 *
-	 * @since 2.0.0
-	 *
-	 * @return void
-	 */
-	public function boot(): void {
-		$this->registerIconSets();
+	public function register(): void
+	{
+		$this->app->singleton( 'icons', function ( $app ) {
+			return new Icons();
+		} );
+
+		$this->mergeConfigFrom(
+			__DIR__ . '/../config/icons.php', 'artisanpack-icons-temp'
+		);
+	}
+
+	public function boot(): void
+	{
+		$this->mergeConfiguration();
+
+		// 2. Tag the config file for the scaffold command.
+		if ($this->app->runningInConsole()) {
+			$this->publishes([
+								 __DIR__ . '/../config/icons.php' => config_path('artisanpack/icons.php'),
+							 ], 'artisanpack-package-config');
+		}
 	}
 
 	/**
-	 * Registers icon sets from configuration and events.
+	 * Merges the package's default configuration with the user's customizations.
 	 *
-	 * This method merges icon sets defined in the configuration file with sets
-	 * registered by third-party extensions via the 'artisanpack-ui-icons.register-icon-sets'
-	 * filter hook. Sets from the config file will override any event-registered
-	 * sets with the same prefix.
+	 * This method ensures that the user's settings in `config/artisanpack.php`
+	 * take precedence over the package's default values.
 	 *
 	 * @since 2.0.0
-	 *
 	 * @return void
 	 */
-	protected function registerIconSets(): void {
-		$this->callAfterResolving( Factory::class, function ( Factory $factory ) {
-			// 1. Get icon sets registered via events.
-			$eventRegistry = new IconSetRegistration();
+	protected function mergeConfiguration(): void
+	{
+		// Get the package's default configuration.
+		$packageDefaults = config('artisanpack-icons-temp', []);
 
-			/**
-			 * Filters the icon set registry to allow third-party extensions to add icon sets.
-			 *
-			 * @since 2.0.0
-			 *
-			 * @param IconSetRegistration $eventRegistry The registry instance for adding icon sets.
-			 */
-			Eventy::filter( 'artisanpack-ui-icons.register-icon-sets', $eventRegistry );
-			$eventSets = $eventRegistry->getSets();
+		// Get the user's custom configuration from config/artisanpack.php.
+		$userConfig = config('artisanpack.icons', []);
 
-			// 2. Get icon sets from the local config file.
-			$configSets = config( 'artisanpack-ui-icons.sets', [] );
+		// Merge them, with the user's config overwriting the defaults.
+		$mergedConfig = array_replace_recursive($packageDefaults, $userConfig);
 
-			// 3. Merge sets. Config sets take priority and will overwrite event sets with the same prefix.
-			$allSets = array_merge( $eventSets, $configSets );
-
-			// 4. Register all collected icon sets with the Blade Icons factory.
-			foreach ( $allSets as $prefix => $details ) {
-				if ( isset( $details['path'] ) ) {
-					$factory->add( $prefix, $details );
-				}
-			}
-		});
+		// Set the final, correctly merged configuration.
+		config(['artisanpack.icons' => $mergedConfig]);
 	}
 }
