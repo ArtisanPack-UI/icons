@@ -1,114 +1,78 @@
 <?php
+/**
+ * Service provider for the Icons package.
+ *
+ * @link       https://gitlab.com/jacob-martella-web-design/artisanpack-ui/artisanpack-ui-icons
+ *
+ * @package    ArtisanPackUI\Icons
+ * @subpackage ArtisanPackUI\Icons\IconsServiceProvider
+ * @since      2.0.0
+ */
 
 namespace ArtisanPackUI\Icons;
 
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Route;
+use ArtisanPackUI\Icons\Registries\IconSetRegistration;
+use BladeUI\Icons\Factory;
 use Illuminate\Support\ServiceProvider;
+use TorMorten\Eventy\Facades\Eventy;
 
-class IconsServiceProvider extends ServiceProvider
-{
+/**
+ * Registers and bootstraps the Icons package.
+ *
+ * @since 2.0.0
+ */
+class IconsServiceProvider extends ServiceProvider {
 
-	public function register(): void
-	{
-		$this->app->singleton( 'icons', function ( $app ) {
-			return new Icons();
-		} );
+	/**
+	 * Bootstrap any application services.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return void
+	 */
+	public function boot(): void {
+		$this->registerIconSets();
 	}
 
-	public function boot(): void
-	{
-		Route::get( '/artisanpack-ui-package-assets/{vendor}/{package}/{path}', function ( $vendor, $package, $path ) {
-			$packagePath = base_path( "vendor/{$vendor}/{$package}/" );
-			$fullPath    = realpath( $packagePath . $path );
-			;
+	/**
+	 * Registers icon sets from configuration and events.
+	 *
+	 * This method merges icon sets defined in the configuration file with sets
+	 * registered by third-party extensions via the 'artisanpack-ui-icons.register-icon-sets'
+	 * filter hook. Sets from the config file will override any event-registered
+	 * sets with the same prefix.
+	 *
+	 * @since 2.0.0
+	 *
+	 * @return void
+	 */
+	protected function registerIconSets(): void {
+		$this->callAfterResolving( Factory::class, function ( Factory $factory ) {
+			// 1. Get icon sets registered via events.
+			$eventRegistry = new IconSetRegistration();
+
 			/**
-			 * For development purposes
+			 * Filters the icon set registry to allow third-party extensions to add icon sets.
+			 *
+			 * @since 2.0.0
+			 *
+			 * @param IconSetRegistration $eventRegistry The registry instance for adding icon sets.
 			 */
+			Eventy::filter( 'artisanpack-ui-icons.register-icon-sets', $eventRegistry );
+			$eventSets = $eventRegistry->getSets();
 
-			if ( $fullPath !== false && is_file( $fullPath ) ) {
-				$mime = $this->mime_content_type( $fullPath );
-				return response()->file( $fullPath, [ 'Content-Type' => $mime ] );
+			// 2. Get icon sets from the local config file.
+			$configSets = config( 'artisanpack-ui-icons.sets', [] );
+
+			// 3. Merge sets. Config sets take priority and will overwrite event sets with the same prefix.
+			$allSets = array_merge( $eventSets, $configSets );
+
+			// 4. Register all collected icon sets with the Blade Icons factory.
+			foreach ( $allSets as $prefix => $details ) {
+				if ( isset( $details['path'] ) ) {
+					$factory->add( $prefix, $details );
+				}
 			}
-
-			abort( 404 );
-		} )->where( 'path', '.*' );
-
-		Blade::directive( 'apIcons', function ( $expression ) {
-			return '<link href="' . url( '/artisanpack-ui-package-assets/artisanpack-ui/icons/dist/css/all.css' ) . '" rel="stylesheet">';
-		} );
-	}
-
-	public function mime_content_type( $filename )
-	{
-
-		$mime_types = array(
-
-			'txt'  => 'text/plain',
-			'htm'  => 'text/html',
-			'html' => 'text/html',
-			'php'  => 'text/html',
-			'css'  => 'text/css',
-			'js'   => 'application/javascript',
-			'json' => 'application/json',
-			'xml'  => 'application/xml',
-			'swf'  => 'application/x-shockwave-flash',
-			'flv'  => 'video/x-flv',
-
-			// images
-			'png'  => 'image/png',
-			'jpe'  => 'image/jpeg',
-			'jpeg' => 'image/jpeg',
-			'jpg'  => 'image/jpeg',
-			'gif'  => 'image/gif',
-			'bmp'  => 'image/bmp',
-			'ico'  => 'image/vnd.microsoft.icon',
-			'tiff' => 'image/tiff',
-			'tif'  => 'image/tiff',
-			'svg'  => 'image/svg+xml',
-			'svgz' => 'image/svg+xml',
-
-			// archives
-			'zip'  => 'application/zip',
-			'rar'  => 'application/x-rar-compressed',
-			'exe'  => 'application/x-msdownload',
-			'msi'  => 'application/x-msdownload',
-			'cab'  => 'application/vnd.ms-cab-compressed',
-
-			// audio/video
-			'mp3'  => 'audio/mpeg',
-			'qt'   => 'video/quicktime',
-			'mov'  => 'video/quicktime',
-
-			// adobe
-			'pdf'  => 'application/pdf',
-			'psd'  => 'image/vnd.adobe.photoshop',
-			'ai'   => 'application/postscript',
-			'eps'  => 'application/postscript',
-			'ps'   => 'application/postscript',
-
-			// ms office
-			'doc'  => 'application/msword',
-			'rtf'  => 'application/rtf',
-			'xls'  => 'application/vnd.ms-excel',
-			'ppt'  => 'application/vnd.ms-powerpoint',
-
-			// open office
-			'odt'  => 'application/vnd.oasis.opendocument.text',
-			'ods'  => 'application/vnd.oasis.opendocument.spreadsheet',
-		);
-
-		$filenameArray = explode( '.', $filename );
-		$ext           = strtolower( array_pop( $filenameArray ) );
-		if ( array_key_exists( $ext, $mime_types ) ) {
-			return $mime_types[ $ext ];
-		} elseif ( function_exists( 'finfo_open' ) ) {
-			$finfo    = finfo_open( FILEINFO_MIME );
-			$mimetype = finfo_file( $finfo, $filename );
-			finfo_close( $finfo );
-			return $mimetype;
-		} else {
-			return 'application/octet-stream';
-		}
+		});
 	}
 }
