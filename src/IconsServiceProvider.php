@@ -68,7 +68,7 @@ class IconsServiceProvider extends ServiceProvider
 	 * Registers icon sets from configuration and events.
 	 *
 	 * This method merges icon sets defined in the configuration file with sets
-	 * registered by third-party extensions via the 'artisanpack-ui-icons.register-icon-sets'
+	 * registered by third-party extensions via the 'ap.icons.register-icon-sets'
 	 * filter hook. Sets from the config file will override any event-registered
 	 * sets with the same prefix.
 	 *
@@ -78,7 +78,20 @@ class IconsServiceProvider extends ServiceProvider
 	 */
 	protected function registerIconSets(): void {
 		$this->callAfterResolving( Factory::class, function ( Factory $factory ) {
-			// 1. Get icon sets registered via events.
+			$allSets = [];
+
+			// 1. Get and validate icon sets from the local config file.
+			$configSets = config( 'artisanpack.icons.sets', [] );
+			if ( is_array( $configSets ) ) {
+				foreach ( $configSets as $prefix => $details ) {
+					// Validation: Ensure the entry is valid before adding it.
+					if ( ! empty( $prefix ) && ! empty( $details['path'] ) && is_dir( $details['path'] ) ) {
+						$allSets[ $prefix ] = $details;
+					}
+				}
+			}
+
+			// 2. Get icon sets registered via events.
 			$eventRegistry = new IconSetRegistration();
 
 			/**
@@ -88,20 +101,15 @@ class IconsServiceProvider extends ServiceProvider
 			 *
 			 * @param IconSetRegistration $eventRegistry The registry instance for adding icon sets.
 			 */
-			Eventy::filter( 'artisanpack-ui-icons.register-icon-sets', $eventRegistry );
+			Eventy::filter( 'ap.icons.register-icon-sets', $eventRegistry );
 			$eventSets = $eventRegistry->getSets();
 
-			// 2. Get icon sets from the local config file.
-			$configSets = config( 'artisanpack-ui-icons.sets', [] );
-
 			// 3. Merge sets. Config sets take priority and will overwrite event sets with the same prefix.
-			$allSets = array_merge( $eventSets, $configSets );
+			$allSets = array_merge( $eventSets, $allSets );
 
-			// 4. Register all collected icon sets with the Blade Icons factory.
+			// 4. Register all collected and validated icon sets with the Blade Icons factory.
 			foreach ( $allSets as $prefix => $details ) {
-				if ( isset( $details['path'] ) ) {
-					$factory->add( $prefix, $details );
-				}
+				$factory->add( $prefix, $details );
 			}
 		});
 	}
