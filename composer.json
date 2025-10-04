@@ -9,9 +9,6 @@
     "tormjens/eventy": "^0.9.4"
   },
   "autoload": {
-    "files": [
-      "src/helpers.php"
-    ],
     "psr-4": {
       "ArtisanPackUI\\Icons\\": "src/"
     }
@@ -20,10 +17,7 @@
     "laravel": {
       "providers": [
         "ArtisanPackUI\\Icons\\IconsServiceProvider"
-      ],
-      "aliases": {
-        "Icons": "ArtisanPackUI\\Icons\\Facades\\Icons"
-      }
+      ]
     }
   }
 }
