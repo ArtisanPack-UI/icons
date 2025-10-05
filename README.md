@@ -124,6 +124,7 @@ For comprehensive documentation, visit the [docs](docs) directory:
 ### Advanced Usage
 - **[Extension API](docs/guide/extension-api.md)** - Third-party package integration
 - **[Migration Guide](docs/guide/migration.md)** - Upgrading from v1.x
+- **[Deprecation Strategy](docs/guide/deprecation-strategy.md)** - v1.x support timeline and migration assistance
 - **[Service Provider](docs/guide/service-provider.md)** - Laravel integration details
 
 ## Requirements
