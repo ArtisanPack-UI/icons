@@ -16,6 +16,17 @@
 return [
 
 	/*
+    |--------------------------------------------------------------------------
+    | Default Icon Set
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify the default icon set prefix that should be used
+    | by UI components when a prefix is not explicitly provided.
+    |
+    */
+	'default_set' => 'heroicon',
+
+	/*
 	|--------------------------------------------------------------------------
 	| Icon Sets
 	|--------------------------------------------------------------------------
