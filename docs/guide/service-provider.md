@@ -111,7 +111,7 @@ protected function registerIconSets()
 {
     $this->app->callAfterResolving(\BladeUI\Icons\Factory::class, function (\BladeUI\Icons\Factory $factory) {
         // 1. Get config-based icon sets
-        $configSets = config('custom-icons.sets', []);
+        $configSets = config('artisanpack.icons.sets', []);
         
         // 2. Get event-driven icon sets
         $eventSets = apply_filters('ap.icons.register-icon-sets', []);
@@ -258,10 +258,10 @@ Check the merged configuration:
 
 ```php
 // In tinker or a controller
-dd(config('custom-icons'));
+dd(config('artisanpack.icons'));
 
 // Check individual sets
-collect(config('custom-icons.sets'))->each(function ($set) {
+collect(config('artisanpack.icons.sets'))->each(function ($set) {
     dump("Prefix: {$set['prefix']}, Path: {$set['path']}, Exists: " . (is_dir($set['path']) ? 'Yes' : 'No'));
 });
 ```

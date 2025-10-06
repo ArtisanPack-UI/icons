@@ -24,21 +24,16 @@ The primary extension point is the `ap.icons.register-icon-sets` filter hook. Th
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
 
 // In your package's service provider boot() method
-Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
-    $sets[] = new IconSetRegistration(
-        path: __DIR__ . '/../../resources/icons',
-        prefix: 'mypackage'
-    );
-    
-    return $sets;
+Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
+    return $registry;
 });
+
 ```
 
 ### Hook Parameters
 
-The filter hook receives and expects to return an array of icon set definitions. Each definition can be:
-- An `IconSetRegistration` object (recommended)
-- An associative array with `path` and `prefix` keys
+The filter hook receives an `IconSetRegistration` registry instance and must return it after adding your icon sets via the `addSet()` or `addSets()` methods.
 
 ## IconSetRegistration Class
 
@@ -121,22 +116,20 @@ For packages that provide multiple themed icon sets:
 ```php
 public function boot()
 {
-    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
+    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         // Register multiple themed icon sets
         $iconSets = [
-            ['path' => __DIR__ . '/../../resources/icons/admin', 'prefix' => 'admin'],
-            ['path' => __DIR__ . '/../../resources/icons/user', 'prefix' => 'user'],
-            ['path' => __DIR__ . '/../../resources/icons/system', 'prefix' => 'sys'],
+            'admin' => __DIR__ . '/../../resources/icons/admin',
+            'user' => __DIR__ . '/../../resources/icons/user',
+            'sys' => __DIR__ . '/../../resources/icons/system',
+
         ];
         
-        foreach ($iconSets as $iconSet) {
-            $sets[] = new IconSetRegistration(
-                path: $iconSet['path'],
-                prefix: $iconSet['prefix']
-            );
-        }
+        foreach ($iconSets as $prefix => $path) {
+            $registry->addSet($path, $prefix);
+         }
         
-        return $sets;
+        return $registry;
     });
 }
 ```

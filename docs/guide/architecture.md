@@ -182,7 +182,7 @@ protected function collectIconSets(): array
     $eventSets = apply_filters('ap.icons.register-icon-sets', []);
     
     // 2. Get config-based registrations
-    $configSets = config('custom-icons.sets', []);
+    $configSets = config('artisanpack.icons.sets', []);
     
     // 3. Merge with config precedence
     $allSets = array_merge($eventSets, $configSets);
@@ -377,7 +377,7 @@ protected function registerIconSet(array $set): void
 ```php
 // Check configuration
 php artisan tinker
-> config('custom-icons.sets')
+> config('artisanpack.icons.sets')
 
 // Verify directory exists
 > is_dir(resource_path('icons/fontawesome'))
@@ -400,7 +400,7 @@ php artisan view:clear
 
 ```php
 // Check for duplicate prefixes in config
-$sets = config('custom-icons.sets');
+$sets = config('artisanpack.icons.sets');
 $prefixes = array_column($sets, 'prefix');
 $duplicates = array_diff_assoc($prefixes, array_unique($prefixes));
 
@@ -419,7 +419,7 @@ $duplicates = array_diff_assoc($prefixes, array_unique($prefixes));
 
 ```php
 // Check icon set sizes
-foreach (config('custom-icons.sets') as $set) {
+foreach (config('artisanpack.icons.sets') as $set) {
     $count = count(glob($set['path'] . '/*.svg'));
     echo "Set '{$set['prefix']}': {$count} icons\n";
 }
@@ -444,17 +444,20 @@ foreach (config('custom-icons.sets') as $set) {
 
 ```php
 // Debug event-driven registration
-Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
-    \Log::debug('Icon sets before MyPackage', ['count' => count($sets)]);
+Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    $beforeCount = count($registry->getSets());
+    \Log::debug('MyPackage registering icons', [
+        'path' => __DIR__ . '/../../resources/icons',
+        'prefix' => 'mypackage',
+        'existing_sets_count' => $beforeCount
+    ]);
     
-    $sets[] = new IconSetRegistration(
-        path: __DIR__ . '/../../resources/icons',
-        prefix: 'mypackage'
-    );
+    $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
     
-    \Log::debug('Icon sets after MyPackage', ['count' => count($sets)]);
-    return $sets;
+    \Log::debug('Icon sets after MyPackage', ['count' => count($registry->getSets())]);
+    return $registry;
 });
+
 ```
 
 ## FAQ
