@@ -1,10 +1,10 @@
 ---
-title: Service Provider
+title: Service Provider Integration
 ---
 
-# Service Provider
+# Service Provider Integration
 
-The ArtisanPack UI Icons package includes an `IconsServiceProvider` that handles service registration, route setup, and Blade directive registration.
+The ArtisanPack UI Icons v2.0 package includes a `IconsServiceProvider` that handles configuration publishing, icon set registration, and integration with the `blade-ui-kit/blade-icons` system.
 
 ## Automatic Registration
 
@@ -12,7 +12,7 @@ The service provider is automatically registered through Laravel's package auto-
 
 ## Manual Registration
 
-If you need to manually register the service provider, add it to your `config/app.php` file:
+If you need to manually register the service provider (rare), add it to your `config/app.php` file:
 
 ```php
 'providers' => [
@@ -21,124 +21,265 @@ If you need to manually register the service provider, add it to your `config/ap
 ],
 ```
 
-## Service Registration
+## Service Provider Architecture
 
-The service provider registers the Icons class as a singleton in Laravel's service container:
+The v2.0 service provider is fundamentally different from v1.x. Instead of registering hardcoded icon arrays, it acts as an adapter that integrates custom icon sets with `blade-ui-kit/blade-icons`.
+
+### Key Components
+
+1. **Configuration Management** - Publishes and merges configuration
+2. **Hybrid Registration System** - Combines config-based and event-driven registration
+3. **BladeIcons Integration** - Registers icon sets with the BladeIcons factory
+4. **Event System** - Supports third-party package integration
+
+## Configuration Management
+
+### Configuration Publishing
+
+The service provider publishes the configuration file during the `boot()` phase:
 
 ```php
-public function register(): void
+public function boot()
 {
-    $this->app->singleton('icons', function ($app) {
-        return new Icons();
+    $this->publishes([
+        __DIR__ . '/../config/icons.php' => config_path('artisanpack/icons.php'),
+    ], 'artisanpack-package-config');
+}
+```
+
+### Configuration Merging
+
+During the `register()` phase, the service provider merges the package configuration:
+
+```php
+public function register()
+{
+    $this->mergeConfigFrom(
+        __DIR__ . '/../config/icons.php',
+        'custom-icons'
+    );
+}
+```
+
+This allows the package to work with default settings even if the config file hasn't been published.
+
+## Hybrid Registration System
+
+The core feature of the v2.0 service provider is the hybrid registration system that combines two registration methods:
+
+### 1. Config-Based Registration
+
+Icon sets defined in `config/artisanpack/icons.php`:
+
+```php
+// config/artisanpack/icons.php
+return [
+    'sets' => [
+        'fa' => [
+            'path'   => resource_path('icons/fontawesome'),
+            'prefix' => 'fa'
+        ],
++       'custom' => [
+            'path'   => resource_path('icons/custom'),
+            'prefix' => 'custom'
+        ],
+    ],
+];
+```
+
+### 2. Event-Driven Registration
+
+Icon sets registered by third-party packages via the `ap.icons.register-icon-sets` filter hook:
+
+```php
+// In a package service provider
+Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
+    $sets[] = new IconSetRegistration(
+        path: __DIR__ . '/../../resources/icons',
+        prefix: 'mypackage'
+    );
+    return $sets;
+});
+```
+
+### Registration Process
+
+The service provider combines both registration methods:
+
+```php
+protected function registerIconSets()
+{
+    $this->app->callAfterResolving(\BladeUI\Icons\Factory::class, function (\BladeUI\Icons\Factory $factory) {
+        // 1. Get config-based icon sets
+        $configSets = config('artisanpack.icons.sets', []);
+        
+        // 2. Get event-driven icon sets
+        $eventSets = apply_filters('ap.icons.register-icon-sets', []);
+        
+        // 3. Merge sets (config takes precedence)
+        $allSets = array_merge($eventSets, $configSets);
+        
+        // 4. Register each set with BladeIcons
+        foreach ($allSets as $prefix => $set) {
++            $factory->add($prefix, ['path' => $set['path'], 'prefix' => $prefix] + $set);
+         }
     });
 }
 ```
 
-This allows you to access the Icons service using:
+## BladeIcons Integration
+
+The service provider integrates with `blade-ui-kit/blade-icons` to provide the underlying icon rendering system.
+
+### Deferred Registration
+
+Icon registration is deferred until after the `BladeCompiler` is resolved to ensure proper initialization order:
 
 ```php
-// Via helper function
-$icons = icons();
-
-// Via service container
-$icons = app('icons');
-
-// Via dependency injection
-public function __construct(Icons $icons)
-{
-    $this->icons = $icons;
-}
-```
-
-## Asset Route Registration
-
-The service provider automatically registers a route for serving package assets:
-
-**Route Pattern:** `/artisanpack-ui-package-assets/{vendor}/{package}/{path}`
-
-This route allows the package to serve CSS files and other assets directly from the vendor directory. The route:
-
-- Resolves the full path to the requested asset
-- Validates the file exists and is accessible
-- Determines the appropriate MIME type
-- Returns the file with proper headers
-- Returns 404 if the file doesn't exist
-
-**Example Usage:**
-```
-/artisanpack-ui-package-assets/artisanpack-ui/icons/dist/css/all.css
-```
-
-### Security Features
-
-The asset serving route includes security measures:
-- Uses `realpath()` to resolve the actual file path
-- Validates that files exist before serving
-- Includes MIME type detection for proper content headers
-- Restricts access to files within the package directory
-
-## Blade Directive Registration
-
-The service provider registers the `@apIcons` Blade directive:
-
-```php
-Blade::directive('apIcons', function ($expression) {
-    return '<link href="' . url('/artisanpack-ui-package-assets/artisanpack-ui/icons/dist/css/all.css') . '" rel="stylesheet">';
+$this->app->callAfterResolving(BladeCompiler::class, function () {
+    $this->registerIcons();
 });
 ```
 
-### Usage
+### Icon Set Format
 
-Include icon styles in your Blade templates:
+Each icon set is registered with the BladeIcons factory using this structure:
 
-```blade
-<!DOCTYPE html>
-<html>
-<head>
-    @apIcons
-    <title>My App</title>
-</head>
-<body>
-    <!-- Your content -->
-</body>
-</html>
+```php
+\app(\BladeUI\Icons\Factory::class)->add('prefix', [
+    'path' => '/absolute/path/to/icons',
+    'prefix' => 'prefix',
+]);
 ```
 
-This will output:
-```html
-<link href="http://yourapp.com/artisanpack-ui-package-assets/artisanpack-ui/icons/dist/css/all.css" rel="stylesheet">
+This creates Blade components like:
+- `<x-icon-prefix-home />` 
+- `<x-icon-prefix-user />`
+- `<x-icon-prefix-settings />`
+
+## Error Handling
+
+The service provider includes comprehensive error handling:
+
+### Path Validation
+
+```php
+foreach ($allSets as $set) {
+    if (!isset($set['path']) || !isset($set['prefix'])) {
+        \Log::warning('Invalid icon set configuration', $set);
+        continue;
+    }
+    
+    if (!is_dir($set['path'])) {
+        \Log::warning("Icon set directory not found: {$set['path']}");
+        continue;
+    }
+    
+    BladeIcons::add($set['prefix'], $set);
+}
 ```
 
-## MIME Type Detection
+### Conflict Resolution
 
-The service provider includes a comprehensive MIME type detection method that supports:
+When the same prefix is registered multiple times, config-based registrations take precedence over event-driven ones:
 
-### Supported File Types
+```php
+// Event-driven sets are merged first, then config sets override
+$allSets = array_merge($eventSets, $configSets);
+```
 
-- **Text Files:** txt, htm, html, php, css, js, json, xml
-- **Images:** png, jpg, jpeg, gif, bmp, ico, tiff, svg
-- **Archives:** zip, rar, exe, msi, cab
-- **Audio/Video:** mp3, qt, mov
-- **Adobe:** pdf, psd, ai, eps, ps
-- **Microsoft Office:** doc, rtf, xls, ppt
-- **OpenOffice:** odt, ods
+## Integration with Third-Party Packages
 
-### Fallback Detection
+The service provider enables seamless integration with third-party packages through the event system.
 
-If the built-in MIME type mapping doesn't find a match, the system will:
-1. Use PHP's `finfo_open()` if available
-2. Fall back to `application/octet-stream` as default
+### Package Registration Example
 
-## Development Notes
+```php
+// In MyPackageServiceProvider
+public function boot()
+{
+    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
+        if ($this->shouldProvideIcons()) {
+            $sets[] = [
+                'path' => __DIR__ . '/../../resources/icons',
+                'prefix' => 'mypackage',
+            ];
+        }
+        return $sets;
+    });
+}
 
-The asset serving route includes a comment indicating it's "For development purposes". In production, you may want to:
+private function shouldProvideIcons(): bool
+{
+    return config('mypackage.provide_icons', true);
+}
+```
 
-- Serve assets through a web server (Apache/Nginx) for better performance
-- Use a CDN for asset delivery
-- Implement caching headers for static assets
+## Performance Considerations
+
+### Lazy Loading
+
+Icon registration is lazy-loaded and only occurs when:
+1. The BladeCompiler is resolved
+2. The first icon component is rendered
+
+### Caching
+
+The service provider leverages Laravel's configuration caching:
+- `php artisan config:cache` will cache the merged configuration
+- Event-driven registrations occur on each request (minimal overhead)
+
+### Memory Efficiency
+
+Unlike v1.x, the v2.0 service provider:
+- Doesn't load icon data into memory
+- Only registers metadata with BladeIcons
+- Allows blade-ui-kit to handle SVG loading on-demand
+
+## Debugging
+
+### Debug Mode
+
+Enable debugging in local development:
+
+```php
+// In a service provider or AppServiceProvider
+if (app()->environment('local')) {
+    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
+        \Log::debug('Custom Icons: Event-driven sets', ['count' => count($sets)]);
+        return $sets;
+    });
+}
+```
+
+### Configuration Debugging
+
+Check the merged configuration:
+
+```php
+// In tinker or a controller
+dd(config('artisanpack.icons'));
+
+// Check individual sets
+collect(config('artisanpack.icons.sets'))->each(function ($set) {
+    dump("Prefix: {$set['prefix']}, Path: {$set['path']}, Exists: " . (is_dir($set['path']) ? 'Yes' : 'No'));
+});
+```
+
+## Differences from v1.x
+
+| Feature | v1.x | v2.0 |
+|---------|------|------|
+| **Service Registration** | Icons singleton | Configuration only |
+| **Asset Serving** | Built-in routes | Delegated to blade-ui-kit |
+| **Blade Directives** | `@apIcons` | None (uses blade-ui-kit) |
+| **Memory Usage** | High (hardcoded arrays) | Minimal (metadata only) |
+| **Icon Loading** | Preloaded | On-demand |
+| **Extensibility** | Limited | Event-driven system |
 
 ## See Also
 
-- [Installation](installation) - Setup and configuration
-- [Blade Directives](blade-directives) - Detailed Blade directive usage
-- [Asset Management](asset-management) - Asset serving and optimization
+- [Installation Guide](installation.md) - Setup and configuration
+- [Extension API](extension-api.md) - Third-party package integration
+- [Architecture Overview](architecture.md) - System design and patterns
+- [Usage Examples](usage-examples.md) - Practical implementation examples

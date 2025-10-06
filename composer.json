@@ -1,55 +1,48 @@
 {
   "name": "artisanpack-ui/icons",
-  "description": "This package provides a set of icons for use in the ArtisanPack UI as well as a way for developers to add their own icons and to call them based on category and type.",
-  "type": "library",
-  "license": "MIT",
-  "version": "1.0.4",
+  "description": "An extensibility layer for Blade Icons that enables flexible registration of custom SVG icon sets via config or events.",
+  "version": "2.0.0",
+  "require": {
+    "php": "^8.2",
+    "illuminate/support": "^12.0",
+    "blade-ui-kit/blade-icons": "^1.8",
+    "tormjens/eventy": "^0.9.4"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^10.0",
+    "pestphp/pest": "^3.5",
+    "pestphp/pest-plugin-laravel": "^3.0",
+    "mockery/mockery": "^1.6",
+    "phpunit/phpunit": "^11.5",
+    "squizlabs/php_codesniffer": "^3.13",
+    "artisanpack-ui/code-style": "^1.0",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.1"
+  },
   "autoload": {
     "psr-4": {
       "ArtisanPackUI\\Icons\\": "src/"
-    },
-    "files": [
-      "src/helpers.php"
-    ]
+    }
   },
   "autoload-dev": {
     "psr-4": {
       "Tests\\": "tests/"
     }
   },
-  "authors": [
-    {
-      "name": "Jacob Martella",
-      "email": "me@jacobmartella.com"
-    }
-  ],
-  "require": {
-    "php": "^8.2",
-    "illuminate/support": ">=5.3",
-    "tormjens/eventy": "^0.9.4",
-    "ext-fileinfo": "*"
-  },
-  "require-dev": {
-    "pestphp/pest": "^3.8",
-    "pestphp/pest-plugin-laravel": "^3.1",
-    "orchestra/testbench": "^10.2"
-  },
-  "config": {
-    "allow-plugins": {
-      "pestphp/pest-plugin": true
-    }
+  "scripts": {
+    "test": "pest",
+    "code-style": "./vendor/bin/phpcs --standard=ArtisanPackUIStandard src"
   },
   "extra": {
     "laravel": {
       "providers": [
         "ArtisanPackUI\\Icons\\IconsServiceProvider"
-      ],
-      "aliases": {
-        "Package": "ArtisanPackUI\\Icons\\Facades\\Icons"
-      }
+      ]
     }
   },
-  "scripts": {
-    "test": "vendor/bin/pest"
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }

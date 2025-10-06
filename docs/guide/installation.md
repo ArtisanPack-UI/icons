@@ -1,83 +1,206 @@
 ---
-title: Installation
+title: Installation Guide
 ---
 
-# Installation
+# Installation Guide
 
-This guide will walk you through installing and setting up the ArtisanPack UI Icons package in your Laravel application.
+This guide will walk you through installing and setting up the ArtisanPack UI Icons package in your Laravel application. This package serves as an extensibility layer for custom icon sets using `blade-ui-kit/blade-icons`.
 
 ## Requirements
 
 - PHP 8.2 or higher
-- Laravel 5.3 or higher
+- Laravel 12.0 or higher
+- `blade-ui-kit/blade-icons` ^1.8
 - Composer
 
-## Installing via Composer
+## Step 1: Install via Composer
 
-You can install the package via Composer by running the following command:
+Install the package via Composer:
 
 ```bash
 composer require artisanpack-ui/icons
 ```
 
-## Service Provider Registration
+The package uses Laravel's auto-discovery feature, so the service provider will be automatically registered.
 
-The package uses Laravel's auto-discovery feature, so the service provider will be automatically registered. If you need to manually register it, add the following to your `config/app.php` file:
+## Step 2: Publish Configuration
 
-```php
-'providers' => [
-    // ...
-    ArtisanPackUI\Icons\IconsServiceProvider::class,
-],
+Publish the configuration file to customize your icon sets:
+
+```bash
+php artisan vendor:publish --tag=artisanpack-package-config
 ```
 
-## Facade Registration (Optional)
+This creates `config/artisanpack/icons.php` where you can register your icon sets.
 
-If you want to use the Icons facade, add it to your `config/app.php` file:
+## Step 3: Configure Your Icon Sets
+
+Edit `config/artisanpack/icons.php` to register your icon sets:
 
 ```php
-'aliases' => [
-    // ...
-    'Icons' => ArtisanPackUI\Icons\Facades\Icons::class,
-],
+<?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Icon Sets
+    |--------------------------------------------------------------------------
+    |
+    | Register your custom SVG icon sets here. Each set requires a path to
+    | the directory containing SVG files and a unique prefix for the icons.
+    |
+    */
+
+    'sets' => [
+        [
+            'path' => resource_path('icons/fontawesome-pro'),
+            'prefix' => 'fa',
+        ],
+        [
+            'path' => resource_path('icons/heroicons'),
+            'prefix' => 'hero',
+        ],
+        [
+            'path' => resource_path('icons/custom'),
+            'prefix' => 'custom',
+        ],
+    ],
+];
 ```
 
-## Including Icon Styles
+## Step 4: Prepare Your Icon Files
 
-To include the icon CSS in your Blade templates, use the `@apIcons` directive:
+Create the directories and place your SVG icon files:
+
+```
+resources/
+├── icons/
+│   ├── fontawesome-pro/
+│   │   ├── home.svg
+│   │   ├── user.svg
+│   │   └── settings.svg
+│   ├── heroicons/
+│   │   ├── bell.svg
+│   │   ├── calendar.svg
+│   │   └── chart.svg
+│   └── custom/
+│       ├── logo.svg
+│       └── brand.svg
+```
+
+**Important:** Ensure your SVG files are clean and optimized. Remove any `width`, `height`, or `fill` attributes to allow for proper styling via CSS classes.
+
+## Step 5: Use Icons in Your Templates
+
+Once configured, you can use your icons as Blade components:
 
 ```blade
-<!DOCTYPE html>
-<html>
-<head>
-    @apIcons
-    <!-- Other head content -->
-</head>
-<body>
-    <!-- Your content -->
-</body>
-</html>
+{{-- Font Awesome Pro icons --}}
+<x-icon-fa-home class="w-6 h-6 text-gray-600" />
+<x-icon-fa-user class="w-5 h-5 text-blue-500" />
+
+{{-- Heroicons --}}
+<x-icon-hero-bell class="w-4 h-4" />
+<x-icon-hero-calendar class="w-6 h-6 text-green-500" />
+
+{{-- Custom icons --}}
+<x-icon-custom-logo class="w-8 h-8" />
+<x-icon-custom-brand class="w-12 h-12 text-purple-600" />
 ```
 
 ## Verification
 
-To verify the installation is working correctly, you can test it in your application:
+To verify your installation is working correctly:
+
+1. **Check the configuration is published:**
+   ```bash
+   ls -la config/artisanpack/icons.php
+   ```
+
+2. **Test an icon in a Blade view:**
+   ```blade
+   <x-icon-fa-home class="w-6 h-6" />
+   ```
+
+3. **Check for errors in Laravel logs:**
+   ```bash
+   tail -f storage/logs/laravel.log
+   ```
+
+## Advanced Configuration
+
+### Font Awesome Pro Integration
+
+For Font Awesome Pro users, extract your purchased icons to a directory:
+
+```bash
+# Extract Font Awesome Pro SVGs
+unzip fontawesome-pro-6.x.x-web.zip
+cp -r fontawesome-pro-6.x.x-web/svgs/* resources/icons/fontawesome-pro/
+```
+
+Update your config:
 
 ```php
-use ArtisanPackUI\Icons\Facades\Icons;
-
-// Get all icons
-$icons = Icons::getIcons();
-
-// Or use the helper function
-$icons = getIcons();
+'sets' => [
+    [
+        'path' => resource_path('icons/fontawesome-pro/solid'),
+        'prefix' => 'fas',
+    ],
+    [
+        'path' => resource_path('icons/fontawesome-pro/regular'),
+        'prefix' => 'far',
+    ],
+    [
+        'path' => resource_path('icons/fontawesome-pro/brands'),
+        'prefix' => 'fab',
+    ],
+],
 ```
+
+### Multiple Icon Libraries
+
+You can register multiple icon libraries simultaneously:
+
+```php
+'sets' => [
+    ['path' => resource_path('icons/heroicons'), 'prefix' => 'hero'],
+    ['path' => resource_path('icons/tabler'), 'prefix' => 'tabler'],
+    ['path' => resource_path('icons/feather'), 'prefix' => 'feather'],
+    ['path' => resource_path('icons/phosphor'), 'prefix' => 'phosphor'],
+],
+```
+
+## Troubleshooting
+
+### Icons Not Displaying
+
+1. **Check file paths:** Ensure the `path` in your config points to existing directories
+2. **Verify SVG format:** Icons should be valid SVG files without `width`, `height`, or hardcoded `fill` attributes
+3. **Check naming:** SVG filenames should use kebab-case (e.g., `user-profile.svg`)
+4. **Clear config cache:** Run `php artisan config:clear` after configuration changes
+
+### Permission Issues
+
+Ensure Laravel can read your icon directories:
+
+```bash
+chmod -R 755 resources/icons/
+```
+
+### Component Not Found
+
+If you get "Component not found" errors:
+
+1. Clear view cache: `php artisan view:clear`
+2. Verify the prefix and filename match your usage
+3. Check Laravel logs for detailed error messages
 
 ## Next Steps
 
-Now that you have the package installed, you can:
+Now that you have the package installed and configured:
 
-- Learn about available [Functions](functions)
-- Explore [Helper Functions](helper-functions)
-- Check out [Usage Examples](usage-examples)
-- Review [Blade Directives](blade-directives)
+- Explore [Usage Examples](usage-examples.md) for practical implementation patterns
+- Learn about [Extension API](extension-api.md) for programmatic icon registration
+- Review [Architecture Overview](architecture.md) to understand how the system works
+- Check the [Migration Guide](migration.md) if upgrading from v1.x
