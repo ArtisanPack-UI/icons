@@ -1,152 +1,124 @@
 <?php
+/**
+ * Service provider for the Icons package.
+ *
+ * This provider handles the registration of icon sets and adds event-driven
+ * extensibility to the core Blade Icons system.
+ *
+ * @link       https://gitlab.com/jacob-martella-web-design/artisanpack-ui/artisanpack-ui-icons
+ * @package    ArtisanPackUI\Icons
+ * @since      2.0.0
+ */
 
 namespace ArtisanPackUI\Icons;
 
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Route;
+use ArtisanPackUI\Icons\Registries\IconSetRegistration;
+use BladeUI\Icons\Factory;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
+use TorMorten\Eventy\Facades\Eventy;
 
+/**
+ * Registers and bootstraps the Icons package services.
+ *
+ * @since 2.0.0
+ */
 class IconsServiceProvider extends ServiceProvider
 {
-
+	/**
+	 * Register any application services.
+	 *
+	 * This method merges the package's local icon configuration into a temporary key.
+	 * The `boot` method will then handle merging this into the main `artisanpack` config.
+	 *
+	 * @since 2.0.0
+	 * @return void
+	 */
 	public function register(): void
 	{
-		$this->app->singleton( 'icons', function ( $app ) {
-			return new Icons();
-		} );
-
 		$this->mergeConfigFrom(
 			__DIR__ . '/../config/icons.php', 'artisanpack-icons-temp'
 		);
 	}
 
+	/**
+	 * Bootstrap any application services.
+	 *
+	 * This method publishes the configuration, merges it into the main `artisanpack`
+	 * config array, and registers all icon sets.
+	 *
+	 * @since 2.0.0
+	 * @return void
+	 * @throws BindingResolutionException
+	 */
 	public function boot(): void
 	{
 		$this->mergeConfiguration();
 
-		// 2. Tag the config file for the scaffold command.
 		if ($this->app->runningInConsole()) {
 			$this->publishes([
 								 __DIR__ . '/../config/icons.php' => config_path('artisanpack/icons.php'),
 							 ], 'artisanpack-package-config');
 		}
 
-		Route::get( '/artisanpack-ui-package-assets/{vendor}/{package}/{path}', function ( $vendor, $package, $path ) {
-			$packagePath = base_path( "vendor/{$vendor}/{$package}/" );
-			$fullPath    = realpath( $packagePath . $path );
-			;
-			/**
-			 * For development purposes
-			 */
-
-			if ( $fullPath !== false && is_file( $fullPath ) ) {
-				$mime = $this->mime_content_type( $fullPath );
-				return response()->file( $fullPath, [ 'Content-Type' => $mime ] );
-			}
-
-			abort( 404 );
-		} )->where( 'path', '.*' );
-
-		Blade::directive( 'apIcons', function ( $expression ) {
-			return '<link href="' . url( '/artisanpack-ui-package-assets/artisanpack-ui/icons/dist/css/all.css' ) . '" rel="stylesheet">';
-		} );
-	}
-
-	public function mime_content_type( $filename )
-	{
-
-		$mime_types = array(
-
-			'txt'  => 'text/plain',
-			'htm'  => 'text/html',
-			'html' => 'text/html',
-			'php'  => 'text/html',
-			'css'  => 'text/css',
-			'js'   => 'application/javascript',
-			'json' => 'application/json',
-			'xml'  => 'application/xml',
-			'swf'  => 'application/x-shockwave-flash',
-			'flv'  => 'video/x-flv',
-
-			// images
-			'png'  => 'image/png',
-			'jpe'  => 'image/jpeg',
-			'jpeg' => 'image/jpeg',
-			'jpg'  => 'image/jpeg',
-			'gif'  => 'image/gif',
-			'bmp'  => 'image/bmp',
-			'ico'  => 'image/vnd.microsoft.icon',
-			'tiff' => 'image/tiff',
-			'tif'  => 'image/tiff',
-			'svg'  => 'image/svg+xml',
-			'svgz' => 'image/svg+xml',
-
-			// archives
-			'zip'  => 'application/zip',
-			'rar'  => 'application/x-rar-compressed',
-			'exe'  => 'application/x-msdownload',
-			'msi'  => 'application/x-msdownload',
-			'cab'  => 'application/vnd.ms-cab-compressed',
-
-			// audio/video
-			'mp3'  => 'audio/mpeg',
-			'qt'   => 'video/quicktime',
-			'mov'  => 'video/quicktime',
-
-			// adobe
-			'pdf'  => 'application/pdf',
-			'psd'  => 'image/vnd.adobe.photoshop',
-			'ai'   => 'application/postscript',
-			'eps'  => 'application/postscript',
-			'ps'   => 'application/postscript',
-
-			// ms office
-			'doc'  => 'application/msword',
-			'rtf'  => 'application/rtf',
-			'xls'  => 'application/vnd.ms-excel',
-			'ppt'  => 'application/vnd.ms-powerpoint',
-
-			// open office
-			'odt'  => 'application/vnd.oasis.opendocument.text',
-			'ods'  => 'application/vnd.oasis.opendocument.spreadsheet',
-		);
-
-		$filenameArray = explode( '.', $filename );
-		$ext           = strtolower( array_pop( $filenameArray ) );
-		if ( array_key_exists( $ext, $mime_types ) ) {
-			return $mime_types[ $ext ];
-		} elseif ( function_exists( 'finfo_open' ) ) {
-			$finfo    = finfo_open( FILEINFO_MIME );
-			$mimetype = finfo_file( $finfo, $filename );
-			finfo_close( $finfo );
-			return $mimetype;
-		} else {
-			return 'application/octet-stream';
-		}
+		$this->registerIconSets();
 	}
 
 	/**
 	 * Merges the package's default configuration with the user's customizations.
 	 *
-	 * This method ensures that the user's settings in `config/artisanpack.php`
-	 * take precedence over the package's default values.
+	 * This method ensures that the user's settings under the 'icons' key
+	 * in `config/artisanpack.php` take precedence over the package's default values.
 	 *
 	 * @since 2.0.0
 	 * @return void
 	 */
 	protected function mergeConfiguration(): void
 	{
-		// Get the package's default configuration.
 		$packageDefaults = config('artisanpack-icons-temp', []);
-
-		// Get the user's custom configuration from config/artisanpack.php.
 		$userConfig = config('artisanpack.icons', []);
-
-		// Merge them, with the user's config overwriting the defaults.
 		$mergedConfig = array_replace_recursive($packageDefaults, $userConfig);
-
-		// Set the final, correctly merged configuration.
 		config(['artisanpack.icons' => $mergedConfig]);
 	}
 
+	/**
+	 * Registers icon sets from configuration and events.
+	 *
+	 * This method merges icon sets defined in the final `artisanpack.icons`
+	 * configuration with sets registered by third-party extensions via the
+	 * 'ap.icons.register-icon-sets' filter hook.
+	 *
+	 * @since 2.0.0
+	 * @return void
+	 * @throws BindingResolutionException
+	 */
+	protected function registerIconSets(): void
+	{
+		$this->callAfterResolving(Factory::class, function (Factory $factory) {
+			$validatedConfigSets = [];
+			// Read icon sets from the final merged configuration.
+			$configSets = config('artisanpack.icons.sets', []);
+			if (is_array($configSets)) {
+				foreach ($configSets as $prefix => $details) {
+					// Validation: Ensure the entry is valid before adding it.
+					if (! empty($prefix) && ! empty($details['path']) && is_dir($details['path'])) {
+						$validatedConfigSets[$prefix] = $details;
+					}
+				}
+			}
+
+			// Get icon sets registered via events.
+			$eventRegistry = new IconSetRegistration();
+			Eventy::filter('ap.icons.register-icon-sets', $eventRegistry);
+			$eventSets = $eventRegistry->getSets();
+
+			// Merge sets, with config taking precedence over events.
+			$allSets = array_merge($eventSets, $validatedConfigSets);
+
+			// Register all collected and validated icon sets with the factory.
+			foreach ($allSets as $prefix => $details) {
+				$factory->add($prefix, $details);
+			}
+		});
+	}
 }

@@ -25,9 +25,12 @@ build:vendors:
     key:
       files:
         - composer.lock
+      prefix: v1
     policy: pull-push
   image: composer:2
   script:
+    - echo "Forcing a clean vendor directory..."
+    - rm -rf vendor
     - composer install --no-interaction --prefer-dist --optimize-autoloader
 
 tests:
@@ -42,6 +45,7 @@ tests:
     key:
       files:
         - composer.lock
+      prefix: v1
     policy: pull
   image: php:8.2
   script:

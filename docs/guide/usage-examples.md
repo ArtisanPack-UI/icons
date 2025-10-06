@@ -4,460 +4,405 @@ title: Usage Examples
 
 # Usage Examples
 
-This guide provides practical examples of using the ArtisanPack UI Icons package in various scenarios, including different access methods, filtering options, and integration patterns.
+This guide provides practical examples of using the ArtisanPack UI Icons package in various scenarios. Learn how to integrate custom icon sets, work with different icon libraries, and use icons effectively in your Laravel applications.
 
-## Basic Usage Examples
+## Basic Icon Usage
 
-### Using Facades
-
-```php
-use ArtisanPackUI\Icons\Facades\Icons;
-
-// Get all icons
-$allIcons = Icons::getIcons();
-
-// Get complete icon list with metadata
-$iconsList = Icons::iconsList();
-```
-
-### Using Helper Functions
-
-```php
-// Get all icons using helper
-$allIcons = getIcons();
-
-// Get complete icon list using helper
-$iconsList = iconsLists(); // Note: function name has 's' at the end
-
-// Get Icons service instance
-$iconsService = icons();
-$allIcons = $iconsService->getIcons();
-```
-
-### Using Direct Instantiation
-
-```php
-use ArtisanPackUI\Icons\Icons;
-
-$iconsService = new Icons();
-$allIcons = $iconsService->getIcons();
-```
-
-## Filtering Examples
-
-### Filter by Icon Type
-
-```php
-// Get solid icons only
-$solidIcons = getIcons(['type' => 'solid']);
-
-// Get regular icons only
-$regularIcons = getIcons(['type' => 'regular']);
-
-// Get brand icons only
-$brandIcons = getIcons(['type' => 'brands']);
-
-// Get icons that support multiple types
-$multiTypeIcons = getIcons(['type' => ['solid', 'regular']]);
-```
-
-### Filter by Category
-
-```php
-// Get navigation icons
-$navIcons = getIcons(['category' => 'navigation']);
-
-// Get social media icons
-$socialIcons = getIcons(['category' => 'social']);
-
-// Get utility icons
-$utilityIcons = getIcons(['category' => 'utility']);
-```
-
-### Combine Multiple Filters
-
-```php
-// Get solid navigation icons
-$solidNavIcons = getIcons([
-    'category' => 'navigation',
-    'type' => 'solid'
-]);
-
-// Get regular social icons
-$regularSocialIcons = getIcons([
-    'category' => 'social',
-    'type' => 'regular'
-]);
-
-// Get icons from multiple categories with specific type
-$multiCategoryIcons = getIcons([
-    'category' => ['navigation', 'utility'],
-    'type' => 'solid'
-]);
-```
-
-## Blade Template Examples
-
-### Including Icon Styles
+### Simple Icon Display
 
 ```blade
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Application</title>
-    
-    @apIcons
-    
-    <style>
-        .icon-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            padding: 2rem;
-        }
-        
-        .icon-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="icon-grid">
-        @foreach($icons as $icon)
-            <div class="icon-item">
-                <x-icon-{{ $icon['icon'] }} class="w-5 h-5" />
-                <span>{{ $icon['name'] }}</span>
-            </div>
-        @endforeach
-    </div>
-</body>
-</html>
+{{-- Basic icon usage --}}
+<x-icon-fa-home class="w-6 h-6" />
+<x-icon-hero-bell class="w-5 h-5" />
+<x-icon-custom-logo class="w-8 h-8" />
+
+{{-- With colors and styling --}}
+<x-icon-fa-user class="w-5 h-5 text-blue-500" />
+<x-icon-hero-calendar class="w-6 h-6 text-green-600" />
+<x-icon-custom-brand class="w-10 h-10 text-purple-500" />
 ```
 
-### Icon Component Usage
+### Dynamic Icon Selection
 
 ```blade
-<!-- Basic icon usage -->
-<x-icon-home />
-<x-icon-user />
-<x-icon-settings />
+{{-- Using variables --}}
+@php
+    $iconName = 'fa-home';
+    $iconClass = 'w-6 h-6 text-gray-600';
+@endphp
 
-<!-- With CSS classes -->
-<x-icon-heart class="text-red-500 w-6 h-6" />
-<x-icon-star class="text-yellow-400 w-4 h-4" />
+<x-dynamic-component :component="'icon-' . $iconName" :class="$iconClass" />
 
-<!-- With custom attributes -->
-<x-icon-info id="help-icon" data-tooltip="Click for help" />
+{{-- Loop through icons --}}
+@php
+    $navIcons = ['fa-home', 'fa-user', 'fa-settings', 'fa-bell'];
+@endphp
 
-<!-- In buttons -->
-<button class="flex items-center gap-2">
-    <x-icon-plus class="w-4 h-4" />
-    Add Item
-</button>
-
-<!-- In navigation -->
 <nav class="flex space-x-4">
-    <a href="/home" class="flex items-center gap-2">
-        <x-icon-home class="w-5 h-5" />
-        Home
-    </a>
-    <a href="/profile" class="flex items-center gap-2">
-        <x-icon-user class="w-5 h-5" />
-        Profile
-    </a>
+    @foreach($navIcons as $icon)
+        <a href="#" class="p-2">
+            <x-dynamic-component :component="'icon-' . $icon" class="w-5 h-5" />
+        </a>
+    @endforeach
 </nav>
 ```
 
-## Controller Examples
+## Real-World Implementation Examples
 
-### Basic Controller Usage
-
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-use Illuminate\Http\Request;
-use ArtisanPackUI\Icons\Facades\Icons;
-
-class IconController extends Controller
-{
-    public function index()
-    {
-        $allIcons = Icons::getIcons();
-        
-        return view('icons.index', compact('allIcons'));
-    }
-    
-    public function byType($type)
-    {
-        $icons = Icons::getIcons(['type' => $type]);
-        
-        return view('icons.by-type', [
-            'icons' => $icons,
-            'type' => $type
-        ]);
-    }
-    
-    public function search(Request $request)
-    {
-        $category = $request->get('category');
-        $type = $request->get('type');
-        
-        $filters = array_filter([
-            'category' => $category,
-            'type' => $type
-        ]);
-        
-        $icons = Icons::getIcons($filters);
-        
-        return response()->json($icons);
-    }
-}
-```
-
-### Using Helper Functions in Controllers
-
-```php
-<?php
-
-namespace App\Http\Controllers;
-
-class DashboardController extends Controller
-{
-    public function index()
-    {
-        // Get navigation icons for sidebar
-        $navIcons = getIcons(['category' => 'navigation']);
-        
-        // Get solid icons for main actions
-        $actionIcons = getIcons(['type' => 'solid']);
-        
-        return view('dashboard', [
-            'navIcons' => $navIcons,
-            'actionIcons' => $actionIcons
-        ]);
-    }
-}
-```
-
-## API Usage Examples
-
-### Creating an Icons API
-
-```php
-<?php
-
-namespace App\Http\Controllers\Api;
-
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-
-class IconsApiController extends Controller
-{
-    public function index(Request $request)
-    {
-        $filters = $request->only(['category', 'type', 'name']);
-        $icons = getIcons(array_filter($filters));
-        
-        return response()->json([
-            'data' => $icons,
-            'count' => count($icons)
-        ]);
-    }
-    
-    public function types()
-    {
-        return response()->json([
-            'types' => ['solid', 'regular', 'brands']
-        ]);
-    }
-    
-    public function categories()
-    {
-        $allIcons = iconsLists();
-        $categories = array_unique(array_column($allIcons, 'category'));
-        
-        return response()->json([
-            'categories' => array_values($categories)
-        ]);
-    }
-}
-```
-
-## Advanced Usage Examples
-
-### Creating a Custom Icon Picker Component
-
-```php
-<?php
-
-namespace App\View\Components;
-
-use Illuminate\View\Component;
-
-class IconPicker extends Component
-{
-    public $selectedIcon;
-    public $category;
-    public $type;
-    
-    public function __construct($selectedIcon = null, $category = null, $type = null)
-    {
-        $this->selectedIcon = $selectedIcon;
-        $this->category = $category;
-        $this->type = $type;
-    }
-    
-    public function render()
-    {
-        $filters = array_filter([
-            'category' => $this->category,
-            'type' => $this->type
-        ]);
-        
-        $icons = getIcons($filters);
-        
-        return view('components.icon-picker', [
-            'icons' => $icons,
-            'selectedIcon' => $this->selectedIcon
-        ]);
-    }
-}
-```
+### Navigation Menu
 
 ```blade
-<!-- resources/views/components/icon-picker.blade.php -->
-<div class="icon-picker">
-    <div class="grid grid-cols-8 gap-2 max-h-64 overflow-y-auto">
-        @foreach($icons as $icon)
-            <button 
-                type="button"
-                class="p-2 border rounded hover:bg-gray-100 @if($selectedIcon === $icon['icon']) bg-blue-100 border-blue-500 @endif"
-                onclick="selectIcon('{{ $icon['icon'] }}', '{{ $icon['name'] }}')"
-            >
-                <x-icon-{{ $icon['icon'] }} class="w-6 h-6 mx-auto" />
-                <div class="text-xs mt-1">{{ $icon['name'] }}</div>
-            </button>
+<nav class="bg-white shadow">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+            <div class="flex space-x-8">
+                <a href="/dashboard" class="flex items-center px-1 pt-1 text-gray-900">
+                    <x-icon-hero-home class="w-5 h-5 mr-2" />
+                    Dashboard
+                </a>
+                
+                <a href="/users" class="flex items-center px-1 pt-1 text-gray-500">
+                    <x-icon-fa-users class="w-5 h-5 mr-2" />
+                    Users
+                </a>
+                
+                <a href="/settings" class="flex items-center px-1 pt-1 text-gray-500">
+                    <x-icon-fa-cog class="w-5 h-5 mr-2" />
+                    Settings
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+```
+
+### Button Components with Icons
+
+```blade
+{{-- Primary button with icon --}}
+<button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center">
+    <x-icon-fa-plus class="w-4 h-4 mr-2" />
+    Add New User
+</button>
+
+{{-- Icon-only button --}}
+<button class="p-2 text-gray-400 hover:text-gray-600">
+    <x-icon-hero-trash class="w-5 h-5" />
+    <span class="sr-only">Delete</span>
+</button>
+
+{{-- Loading state --}}
+<button class="bg-gray-600 text-white font-bold py-2 px-4 rounded flex items-center" disabled>
+    <x-icon-hero-refresh class="w-4 h-4 mr-2 animate-spin" />
+    Processing...
+</button>
+```
+
+### Data Tables with Actions
+
+```blade
+<table class="min-w-full divide-y divide-gray-200">
+    <thead class="bg-gray-50">
+        <tr>
+            <th class="px-6 py-3 text-left">
+                <span class="flex items-center">
+                    Name
+                    <x-icon-hero-chevron-up-down class="w-4 h-4 ml-1 text-gray-400" />
+                </span>
+            </th>
+            <th class="px-6 py-3 text-left">Email</th>
+            <th class="px-6 py-3 text-left">Actions</th>
+        </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200">
+        @foreach($users as $user)
+        <tr>
+            <td class="px-6 py-4">
+                <div class="flex items-center">
+                    <x-icon-fa-user class="w-5 h-5 text-gray-400 mr-3" />
+                    {{ $user->name }}
+                </div>
+            </td>
+            <td class="px-6 py-4">{{ $user->email }}</td>
+            <td class="px-6 py-4">
+                <div class="flex space-x-2">
+                    <button class="text-blue-600 hover:text-blue-900">
+                        <x-icon-hero-pencil class="w-4 h-4" />
+                    </button>
+                    <button class="text-red-600 hover:text-red-900">
+                        <x-icon-hero-trash class="w-4 h-4" />
+                    </button>
+                </div>
+            </td>
+        </tr>
         @endforeach
+    </tbody>
+</table>
+```
+
+### Form Elements with Icons
+
+```blade
+<form class="space-y-6">
+    {{-- Input with icon --}}
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <x-icon-hero-user class="h-5 w-5 text-gray-400" />
+        </div>
+        <input type="text" class="pl-10 block w-full border-gray-300 rounded-md" placeholder="Username">
+    </div>
+    
+    {{-- Password field --}}
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <x-icon-hero-lock-closed class="h-5 w-5 text-gray-400" />
+        </div>
+        <input type="password" class="pl-10 block w-full border-gray-300 rounded-md" placeholder="Password">
+    </div>
+    
+    {{-- Submit button --}}
+    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700">
+        <x-icon-hero-arrow-right class="w-4 h-4 mr-2" />
+        Sign In
+    </button>
+</form>
+```
+
+### Alert Messages
+
+```blade
+{{-- Success alert --}}
+<div class="bg-green-50 border border-green-200 rounded-md p-4">
+    <div class="flex">
+        <x-icon-hero-check-circle class="w-5 h-5 text-green-400" />
+        <div class="ml-3">
+            <p class="text-sm text-green-800">Successfully saved!</p>
+        </div>
+    </div>
+</div>
+
+{{-- Error alert --}}
+<div class="bg-red-50 border border-red-200 rounded-md p-4">
+    <div class="flex">
+        <x-icon-hero-x-circle class="w-5 h-5 text-red-400" />
+        <div class="ml-3">
+            <p class="text-sm text-red-800">Something went wrong.</p>
+        </div>
+    </div>
+</div>
+
+{{-- Warning alert --}}
+<div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+    <div class="flex">
+        <x-icon-hero-exclamation-triangle class="w-5 h-5 text-yellow-400" />
+        <div class="ml-3">
+            <p class="text-sm text-yellow-800">Please review your settings.</p>
+        </div>
     </div>
 </div>
 ```
 
-### Performance Optimization Example
+## Advanced Usage Patterns
 
-```php
-<?php
+### Conditional Icon Display
 
-namespace App\Services;
+```blade
+{{-- Status indicators --}}
+@switch($user->status)
+    @case('active')
+        <span class="flex items-center text-green-600">
+            <x-icon-hero-check-circle class="w-4 h-4 mr-1" />
+            Active
+        </span>
+        @break
+    @case('pending')
+        <span class="flex items-center text-yellow-600">
+            <x-icon-hero-clock class="w-4 h-4 mr-1" />
+            Pending
+        </span>
+        @break
+    @case('inactive')
+        <span class="flex items-center text-red-600">
+            <x-icon-hero-x-circle class="w-4 h-4 mr-1" />
+            Inactive
+        </span>
+        @break
+@endswitch
 
-use Illuminate\Support\Facades\Cache;
+{{-- File type icons --}}
+@php
+    $fileExtension = pathinfo($file->name, PATHINFO_EXTENSION);
+@endphp
 
-class IconService
-{
-    public function getCachedIcons($filters = [])
-    {
-        $cacheKey = 'icons_' . md5(serialize($filters));
-        
-        return Cache::remember($cacheKey, 3600, function () use ($filters) {
-            return getIcons($filters);
+@switch($fileExtension)
+    @case('pdf')
+        <x-icon-fa-file-pdf class="w-6 h-6 text-red-600" />
+        @break
+    @case('doc')
+    @case('docx')
+        <x-icon-fa-file-word class="w-6 h-6 text-blue-600" />
+        @break
+    @case('jpg')
+    @case('png')
+        <x-icon-fa-file-image class="w-6 h-6 text-green-600" />
+        @break
+    @default
+        <x-icon-fa-file class="w-6 h-6 text-gray-600" />
+@endswitch
+```
+
+### Icon Grids and Collections
+
+```blade
+{{-- Feature grid --}}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="text-center p-6">
+        <x-icon-hero-shield-check class="w-12 h-12 mx-auto text-green-600 mb-4" />
+        <h3 class="font-semibold mb-2">Secure</h3>
+        <p class="text-gray-600">Your data is protected with enterprise-grade security.</p>
+    </div>
+    
+    <div class="text-center p-6">
+        <x-icon-hero-rocket-launch class="w-12 h-12 mx-auto text-blue-600 mb-4" />
+        <h3 class="font-semibold mb-2">Fast</h3>
+        <p class="text-gray-600">Lightning-fast performance for all your needs.</p>
+    </div>
+    
+    <div class="text-center p-6">
+        <x-icon-hero-heart class="w-12 h-12 mx-auto text-red-600 mb-4" />
+        <h3 class="font-semibold mb-2">Loved</h3>
+        <p class="text-gray-600">Trusted by thousands of satisfied customers.</p>
+    </div>
+</div>
+```
+
+### Social Media Integration
+
+```blade
+{{-- Social sharing buttons --}}
+<div class="flex space-x-4">
+    <a href="#" class="flex items-center px-4 py-2 bg-blue-600 text-white rounded">
+        <x-icon-fab-facebook class="w-4 h-4 mr-2" />
+        Share
+    </a>
+    
+    <a href="#" class="flex items-center px-4 py-2 bg-blue-400 text-white rounded">
+        <x-icon-fab-twitter class="w-4 h-4 mr-2" />
+        Tweet
+    </a>
+    
+    <a href="#" class="flex items-center px-4 py-2 bg-blue-700 text-white rounded">
+        <x-icon-fab-linkedin class="w-4 h-4 mr-2" />
+        Share
+    </a>
+</div>
+
+{{-- Social profiles --}}
+<div class="flex space-x-3">
+    @foreach($user->socialProfiles as $profile)
+        <a href="{{ $profile->url }}" class="text-gray-400 hover:text-gray-600">
+            <x-dynamic-component 
+                :component="'icon-fab-' . $profile->platform" 
+                class="w-5 h-5" 
+            />
+        </a>
+    @endforeach
+</div>
+```
+
+## Integration with Livewire Components
+
+### Livewire Button Component
+
+```blade
+{{-- resources/views/livewire/icon-button.blade.php --}}
+<button 
+    wire:click="{{ $action }}"
+    class="{{ $class ?? 'bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' }}"
+    @if($loading) disabled @endif
+>
+    @if($loading)
+        <x-icon-hero-refresh class="w-4 h-4 mr-2 animate-spin" />
+    @else
+        <x-dynamic-component :component="'icon-' . $icon" class="w-4 h-4 mr-2" />
+    @endif
+    {{ $slot }}
+</button>
+```
+
+Usage:
+```blade
+<livewire:icon-button action="save" icon="hero-check" loading="saving">
+    Save Changes
+</livewire:icon-button>
+```
+
+### Search with Icon Feedback
+
+```blade
+{{-- Livewire search component --}}
+<div class="relative">
+    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        @if($searching)
+            <x-icon-hero-refresh class="h-5 w-5 text-gray-400 animate-spin" />
+        @else
+            <x-icon-hero-magnifying-glass class="h-5 w-5 text-gray-400" />
+        @endif
+    </div>
+    <input 
+        type="text" 
+        wire:model.live.debounce.300ms="search"
+        class="pl-10 block w-full border-gray-300 rounded-md" 
+        placeholder="Search..."
+    >
+</div>
+```
+
+## Performance Considerations
+
+### Lazy Loading Icons
+
+```blade
+{{-- Only load icons when needed --}}
+@if($showIcons)
+    <div class="icon-grid">
+        @foreach($items as $item)
+            <x-icon-fa-{{ $item->icon }} class="w-6 h-6" />
+        @endforeach
+    </div>
+@endif
+
+{{-- Conditional icon loading --}}
+@once
+    @if($needsIcons)
+        @push('head')
+            {{-- Any additional icon-related styles --}}
+        @endpush
+    @endif
+@endonce
+```
+
+### Icon Caching Strategies
+
+```blade
+{{-- Cache frequently used icon combinations --}}
+@php
+    $cacheKey = 'nav_icons_' . auth()->user()->role;
+    $navIcons = cache()->remember($cacheKey, 3600, function () {
+        return collect(['home', 'users', 'settings'])->map(function ($icon) {
+            return (object) ['name' => $icon, 'component' => 'icon-fa-' . $icon];
         });
-    }
-    
-    public function getIconsByCategory($category)
-    {
-        return $this->getCachedIcons(['category' => $category]);
-    }
-    
-    public function getIconsByType($type)
-    {
-        return $this->getCachedIcons(['type' => $type]);
-    }
-}
+    });
+@endphp
+
+@foreach($navIcons as $icon)
+    <x-dynamic-component :component="$icon->component" class="w-5 h-5" />
+@endforeach
 ```
 
-## Testing Examples
+## Next Steps
 
-### Feature Tests
-
-```php
-<?php
-
-namespace Tests\Feature;
-
-use Tests\TestCase;
-use ArtisanPackUI\Icons\Icons;
-
-class IconsTest extends TestCase
-{
-    public function test_can_get_all_icons()
-    {
-        $icons = getIcons();
-        
-        $this->assertIsArray($icons);
-        $this->assertNotEmpty($icons);
-    }
-    
-    public function test_can_filter_icons_by_type()
-    {
-        $solidIcons = getIcons(['type' => 'solid']);
-        
-        $this->assertIsArray($solidIcons);
-        
-        foreach ($solidIcons as $icon) {
-            $this->assertContains('solid', $icon['type']);
-        }
-    }
-    
-    public function test_icons_api_endpoint()
-    {
-        $response = $this->get('/api/icons');
-        
-        $response->assertStatus(200)
-                 ->assertJsonStructure([
-                     'data' => [
-                         '*' => ['name', 'icon', 'category', 'type']
-                     ],
-                     'count'
-                 ]);
-    }
-}
-```
-
-## Error Handling Examples
-
-```php
-<?php
-
-try {
-    $icons = getIcons(['type' => 'invalid-type']);
-} catch (\Exception $e) {
-    // Handle error gracefully
-    $icons = [];
-    \Log::warning('Invalid icon type requested', ['type' => 'invalid-type']);
-}
-
-// Validate filter parameters
-$validTypes = ['solid', 'regular', 'brands'];
-$requestedType = $request->get('type');
-
-if ($requestedType && !in_array($requestedType, $validTypes)) {
-    return response()->json(['error' => 'Invalid icon type'], 400);
-}
-
-$icons = getIcons(['type' => $requestedType]);
-```
-
-## See Also
-
-- [Functions](functions) - Complete function reference
-- [Helper Functions](helper-functions) - Global helper function details
-- [Blade Directives](blade-directives) - Template integration
-- [Installation](installation) - Getting started guide
+- Explore [Extension API](extension-api.md) for programmatic icon registration
+- Review [Architecture Overview](architecture.md) to understand the underlying system
+- Check [Migration Guide](migration.md) if upgrading from v1.x
+- Learn about [Service Provider](service-provider.md) integration details
