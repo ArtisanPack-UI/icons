@@ -44,7 +44,7 @@ test('it validates configuration structure', function () {
     // Set up valid configuration
     Config::set('artisanpack.icons.sets', [
         'custom' => [
-            'path' => __DIR__ . '/../../tests/fixtures/icons',
+            'path'   => __DIR__ . '/../../tests/fixtures/icons',
             'prefix' => 'custom'
         ]
     ]);
@@ -74,8 +74,8 @@ test('it handles missing required configuration keys', function () {
             'prefix' => 'test'
             // Missing path
         ],
-        'valid' => [
-            'path' => $testDir,
+        'valid'    => [
+            'path'   => $testDir,
             'prefix' => 'test'
         ]
     ]);

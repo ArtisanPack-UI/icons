@@ -1,6 +1,6 @@
 # ArtisanPack UI Icon Changelog
 
-## 2.0.0 - 2025-10-05
+## 2.0.0 - 2025-10-06
 
 ### 🚨 MAJOR BREAKING CHANGES
 

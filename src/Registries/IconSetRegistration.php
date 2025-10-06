@@ -49,7 +49,8 @@ class IconSetRegistration {
 	 *
 	 * @throws InvalidArgumentException If the path is not a directory or the prefix is empty.
 	 */
-	public function addSet( string $path, string $prefix ): self {
+	public function addSet( string $path, string $prefix ): self
+	{
 		if ( empty( $prefix ) ) {
 			throw new InvalidArgumentException( 'Icon set prefix cannot be empty.' );
 		}
@@ -74,7 +75,8 @@ class IconSetRegistration {
 	 * and the value is an array containing the 'path'.
 	 * @return self
 	 */
-	public function addSets( array $sets ): self {
+	public function addSets( array $sets ): self
+	{
 		foreach ( $sets as $prefix => $details ) {
 			if ( isset( $details['path'] ) ) {
 				$this->addSet( $details['path'], $prefix );
@@ -90,7 +92,8 @@ class IconSetRegistration {
 	 *
 	 * @return array The array of validated icon sets.
 	 */
-	public function getSets(): array {
+	public function getSets(): array
+	{
 		return $this->sets;
 	}
 }
