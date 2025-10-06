@@ -19,11 +19,11 @@ ArtisanPack UI Icons v2.0 is built on the adapter pattern, transforming from a h
 ├─────────────────────────────────────────────────────────────┤
 │  Config-Based Registration  │  Event-Driven Registration   │
 │  ┌─────────────────────────┐ │ ┌─────────────────────────┐  │
-│  │ config/custom-icons.php │ │ │ Third-Party Packages    │  │
+│  │ config/artisanpack/icons.php │ │ │ Third-Party Packages    │  │
 │  │                         │ │ │ via Filter Hooks        │  │
 │  └─────────────────────────┘ │ └─────────────────────────┘  │
 ├─────────────────────────────────────────────────────────────┤
-│              CustomIconsServiceProvider                     │
+│              IconsServiceProvider                     │
 │               (Hybrid Registration)                         │
 ├─────────────────────────────────────────────────────────────┤
 │                  blade-ui-kit/blade-icons                  │
@@ -61,7 +61,7 @@ class Icons {
 ### Adapter Approach (v2.0)
 ```php
 // v2.0 - Adapter approach
-class CustomIconsServiceProvider {
+class IconsServiceProvider {
     public function boot() {
         // Adapt custom icon sets to BladeIcons format
         $this->registerIcons();
@@ -141,13 +141,13 @@ The v2.0 architecture implements a hybrid registration system that combines two 
 ### Registration Sources
 
 #### 1. Config-Based Registration
-- **Source**: `config/custom-icons.php`
+- **Source**: `config/artisanpack/icons.php`
 - **Priority**: High (overrides event-driven)
 - **Use Case**: User-configured icon sets
 - **Control**: Direct user control
 
 ```php
-// config/custom-icons.php
+// config/artisanpack/icons.php
 return [
     'sets' => [
         ['path' => resource_path('icons/fa'), 'prefix' => 'fa'],
@@ -164,7 +164,7 @@ return [
 
 ```php
 // In a package service provider
-add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
     $sets[] = new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons',
         prefix: 'mypackage'
@@ -179,7 +179,7 @@ add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
 protected function collectIconSets(): array
 {
     // 1. Collect event-driven registrations
-    $eventSets = apply_filters('artisanpack-ui-icons.register-icon-sets', []);
+    $eventSets = apply_filters('ap.icons.register-icon-sets', []);
     
     // 2. Get config-based registrations
     $configSets = config('custom-icons.sets', []);
@@ -205,7 +205,7 @@ protected function validateIconSet(array $set): bool
 
 ```php
 <?php
-// config/custom-icons.php
+// config/artisanpack/icons.php
 
 return [
     /*
@@ -444,7 +444,7 @@ foreach (config('custom-icons.sets') as $set) {
 
 ```php
 // Debug event-driven registration
-add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
     \Log::debug('Icon sets before MyPackage', ['count' => count($sets)]);
     
     $sets[] = new IconSetRegistration(

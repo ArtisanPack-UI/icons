@@ -4,7 +4,7 @@ title: Service Provider Integration
 
 # Service Provider Integration
 
-The ArtisanPack UI Icons v2.0 package includes a `CustomIconsServiceProvider` that handles configuration publishing, icon set registration, and integration with the `blade-ui-kit/blade-icons` system.
+The ArtisanPack UI Icons v2.0 package includes a `IconsServiceProvider` that handles configuration publishing, icon set registration, and integration with the `blade-ui-kit/blade-icons` system.
 
 ## Automatic Registration
 
@@ -17,7 +17,7 @@ If you need to manually register the service provider (rare), add it to your `co
 ```php
 'providers' => [
     // ...
-    ArtisanPackUI\Icons\CustomIconsServiceProvider::class,
+    ArtisanPackUI\Icons\IconsServiceProvider::class,
 ],
 ```
 
@@ -42,8 +42,8 @@ The service provider publishes the configuration file during the `boot()` phase:
 public function boot()
 {
     $this->publishes([
-        __DIR__ . '/../config/custom-icons.php' => config_path('custom-icons.php'),
-    ], 'custom-icons-config');
+        __DIR__ . '/../config/icons.php' => config_path('artisanpack/icons.php'),
+    ], 'artisanpack-package-config');
 }
 ```
 
@@ -55,7 +55,7 @@ During the `register()` phase, the service provider merges the package configura
 public function register()
 {
     $this->mergeConfigFrom(
-        __DIR__ . '/../config/custom-icons.php',
+        __DIR__ . '/../config/icons.php',
         'custom-icons'
     );
 }
@@ -69,19 +69,19 @@ The core feature of the v2.0 service provider is the hybrid registration system 
 
 ### 1. Config-Based Registration
 
-Icon sets defined in `config/custom-icons.php`:
+Icon sets defined in `config/artisanpack/icons.php`:
 
 ```php
-// config/custom-icons.php
+// config/artisanpack/icons.php
 return [
     'sets' => [
-        [
-            'path' => resource_path('icons/fontawesome'),
-            'prefix' => 'fa',
+        'fa' => [
+            'path'   => resource_path('icons/fontawesome'),
+            'prefix' => 'fa'
         ],
-        [
-            'path' => resource_path('icons/custom'),
-            'prefix' => 'custom',
++       'custom' => [
+            'path'   => resource_path('icons/custom'),
+            'prefix' => 'custom'
         ],
     ],
 ];
@@ -89,11 +89,11 @@ return [
 
 ### 2. Event-Driven Registration
 
-Icon sets registered by third-party packages via the `artisanpack-ui-icons.register-icon-sets` filter hook:
+Icon sets registered by third-party packages via the `ap.icons.register-icon-sets` filter hook:
 
 ```php
 // In a package service provider
-add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
     $sets[] = new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons',
         prefix: 'mypackage'
@@ -107,25 +107,22 @@ add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
 The service provider combines both registration methods:
 
 ```php
-protected function registerIcons()
+protected function registerIconSets()
 {
-    $this->app->callAfterResolving(BladeCompiler::class, function () {
+    $this->app->callAfterResolving(\BladeUI\Icons\Factory::class, function (\BladeUI\Icons\Factory $factory) {
         // 1. Get config-based icon sets
         $configSets = config('custom-icons.sets', []);
         
         // 2. Get event-driven icon sets
-        $eventSets = apply_filters('artisanpack-ui-icons.register-icon-sets', []);
+        $eventSets = apply_filters('ap.icons.register-icon-sets', []);
         
         // 3. Merge sets (config takes precedence)
         $allSets = array_merge($eventSets, $configSets);
         
         // 4. Register each set with BladeIcons
-        foreach ($allSets as $set) {
-            BladeIcons::add($set['prefix'], [
-                'path' => $set['path'],
-                'prefix' => $set['prefix'],
-            ]);
-        }
+        foreach ($allSets as $prefix => $set) {
++            $factory->add($prefix, ['path' => $set['path'], 'prefix' => $prefix] + $set);
+         }
     });
 }
 ```
@@ -149,7 +146,7 @@ $this->app->callAfterResolving(BladeCompiler::class, function () {
 Each icon set is registered with the BladeIcons factory using this structure:
 
 ```php
-BladeIcons::add('prefix', [
+\app(\BladeUI\Icons\Factory::class)->add('prefix', [
     'path' => '/absolute/path/to/icons',
     'prefix' => 'prefix',
 ]);
@@ -201,7 +198,7 @@ The service provider enables seamless integration with third-party packages thro
 // In MyPackageServiceProvider
 public function boot()
 {
-    add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
         if ($this->shouldProvideIcons()) {
             $sets[] = [
                 'path' => __DIR__ . '/../../resources/icons',
@@ -248,7 +245,7 @@ Enable debugging in local development:
 ```php
 // In a service provider or AppServiceProvider
 if (app()->environment('local')) {
-    add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
         \Log::debug('Custom Icons: Event-driven sets', ['count' => count($sets)]);
         return $sets;
     });

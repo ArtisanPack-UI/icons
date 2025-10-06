@@ -95,7 +95,7 @@ composer update artisanpack-ui/icons
 ### Step 2: Publish New Configuration
 
 ```bash
-php artisan vendor:publish --tag=custom-icons-config
+php artisan vendor:publish --tag=artisanpack-package-config
 ```
 
 ### Step 3: Remove Old Code
@@ -154,7 +154,7 @@ resources/
 
 ### Step 5: Configure Icon Sets
 
-Edit `config/custom-icons.php`:
+Edit `config/artisanpack/icons.php`:
 
 ```php
 return [
@@ -406,7 +406,7 @@ If you encounter issues during migration:
 
 1. **Check the logs** - Laravel logs often contain helpful error messages
 2. **Verify file paths** - Ensure icon directories and files exist
-3. **Review configuration** - Double-check `config/custom-icons.php`
+3. **Review configuration** - Double-check `config/artisanpack/icons.php`
 4. **Test incrementally** - Migrate one icon set at a time
 
 ## Next Steps

@@ -22,26 +22,26 @@ composer require artisanpack-ui/icons
 Publish the configuration file:
 
 ```bash
-php artisan vendor:publish --tag=custom-icons-config
+php artisan vendor:publish --tag=artisanpack-package-config
 ```
 
 ## Quick Start
 
 ### 1. Configure Your Icon Sets
 
-Edit `config/custom-icons.php` to register your icon sets:
+Edit `config/artisanpack/icons.php` to register your icon sets:
 
 ```php
 return [
     'sets' => [
-        [
-            'path' => resource_path('icons/fontawesome-pro'),
-            'prefix' => 'fa',
-        ],
-        [
-            'path' => resource_path('icons/custom-brand'),
-            'prefix' => 'brand',
-        ],
+        'fa' => [
++            'path' => resource_path('icons/fontawesome-pro'),
++            'prefix' => 'fa',
++        ],
++        'brand' => [
++            'path' => resource_path('icons/custom-brand'),
++            'prefix' => 'brand',
++        ],
     ],
 ];
 ```
@@ -77,18 +77,18 @@ resources/
 
 ### Config-Based Registration
 
-The simplest approach - define icon sets in your `config/custom-icons.php`:
+The simplest approach - define icon sets in your `config/artisanpack/icons.php`:
 
 ```php
 return [
     'sets' => [
-        [
-            'path' => resource_path('icons/heroicons'),
-            'prefix' => 'hero',
+        'hero' => [
+            'path'   => resource_path('icons/heroicons'), 
+            'prefix' => 'hero'
         ],
-        [
-            'path' => resource_path('icons/tabler'),
-            'prefix' => 'tabler',
++       'tabler' => [
+            'path'   => resource_path('icons/tabler'),
+            'prefix' => 'tabler'
         ],
     ],
 ];
@@ -100,16 +100,14 @@ Perfect for packages that want to register their own icon sets:
 
 ```php
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
+use TorMorten\Eventy\Facades\Eventy;
 
 // In a service provider or event listener
-add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
-    $sets[] = new IconSetRegistration(
-        path: __DIR__ . '/../../resources/icons',
-        prefix: 'mypackage'
-    );
-    
-    return $sets;
+Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
+    return $registry;
 });
+
 ```
 
 ## Documentation

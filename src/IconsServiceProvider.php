@@ -109,8 +109,9 @@ class IconsServiceProvider extends ServiceProvider
 
 			// Get icon sets registered via events.
 			$eventRegistry = new IconSetRegistration();
-			Eventy::filter('ap.icons.register-icon-sets', $eventRegistry);
+			$eventRegistry = Eventy::filter('ap.icons.register-icon-sets', $eventRegistry);
 			$eventSets = $eventRegistry->getSets();
+
 
 			// Merge sets, with config taking precedence over events.
 			$allSets = array_merge($eventSets, $validatedConfigSets);

@@ -260,25 +260,19 @@ test('it handles null configuration gracefully', function () {
 
 test('it integrates with eventy properly', function () {
     // Add multiple filters to test eventy integration
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
-        $registry->add('filter1-set', [
-            'path' => storage_path('test-provider-icons-1'),
-            'prefix' => 'filter1'
-        ]);
-        
-        return $registry;
+	Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+		$registry->addSet(storage_path('test-provider-icons-1'), 'filter1');
+		return $registry;
     });
-    
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
-        $registry->add('filter2-set', [
-            'path' => storage_path('test-provider-icons-2'),
-            'prefix' => 'filter2'
-        ]);
-        
-        return $registry;
+
+
+	Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+		$registry->addSet(storage_path('test-provider-icons-2'), 'filter2');
+		return $registry;
     });
-    
-    // Let the service provider handle Factory instantiation
+
+
+	// Let the service provider handle Factory instantiation
     // We're testing eventy integration behavior
     
     // Boot the service provider

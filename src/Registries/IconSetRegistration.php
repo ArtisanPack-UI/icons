@@ -3,7 +3,7 @@
  * Icon Set Registration handler.
  *
  * Provides a structured API for third-party extensions to register icon sets
- * via the 'artisanpack-ui-icons.register-icon-sets' filter hook.
+ * via the 'ap.icons.register-icon-sets' filter hook.
  *
  * @link       https://gitlab.com/jacob-martella-web-design/artisanpack-ui/artisanpack-ui-icons
  *

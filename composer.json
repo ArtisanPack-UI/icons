@@ -30,7 +30,7 @@
   },
   "scripts": {
     "test": "pest",
-    "code-syle": "./vendor/bin/phpcs --standard=ArtisanPackUIStandard src"
+    "code-style": "./vendor/bin/phpcs --standard=ArtisanPackUIStandard src"
   },
   "extra": {
     "laravel": {

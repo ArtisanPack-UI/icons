@@ -36,8 +36,8 @@ This release represents a fundamental architectural transformation from a hardco
 ### ✨ New Features
 
 #### Custom Icon Set Registration
-- **NEW**: Configuration-based icon set registration via `config/custom-icons.php`
-- **NEW**: Event-driven icon set registration using `artisanpack-ui-icons.register-icon-sets` filter
+- **NEW**: Configuration-based icon set registration via `config/artisanpack/icons.php`
+- **NEW**: Event-driven icon set registration using `ap.icons.register-icon-sets` filter
 - **NEW**: `IconSetRegistration` class for structured icon set definitions
 - **NEW**: Hybrid registration system (config + events)
 
@@ -46,13 +46,12 @@ This release represents a fundamental architectural transformation from a hardco
 - **NEW**: Blade component approach: `<x-icon-prefix-name />`
 - **NEW**: Support for multiple icon sets (Font Awesome Pro, Heroicons, custom)
 - **NEW**: Memory efficient - 95%+ reduction in memory usage
-- **NEW**: `CustomIconsServiceProvider` replacing `IconsServiceProvider`
 
 ### 🔧 Configuration Changes
 
 #### New Configuration File
 ```bash
-php artisan vendor:publish --tag=custom-icons-config
+php artisan vendor:publish --tag=artisanpack-package-config
 ```
 
 #### Required Dependencies
@@ -66,7 +65,7 @@ php artisan vendor:publish --tag=custom-icons-config
 
 #### Quick Migration Steps
 1. Update composer dependencies to `^2.0`
-2. Publish new configuration: `php artisan vendor:publish --tag=custom-icons-config`
+2. Publish new configuration: `php artisan vendor:publish --tag=artisanpack-package-config`
 3. Remove old code (see migration guide for details)
 4. Obtain and configure your icon sets (Font Awesome Pro recommended)
 5. Update templates to use new Blade components
@@ -95,7 +94,7 @@ php artisan vendor:publish --tag=custom-icons-config
 - **October 2025**: v2.0.0 release
 - **November 2025 - March 2026**: Migration period with dual support
 - **April 2026**: v1.x marked as deprecated (warnings in composer)
-- **January 2026**: v1.x end of life
+- **January 2027**: v1.x end of life
 
 #### Support Resources
 - 📖 [Migration Guide](docs/guide/migration.md) - Comprehensive upgrade instructions

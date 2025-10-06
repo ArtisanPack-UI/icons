@@ -28,14 +28,14 @@ The package uses Laravel's auto-discovery feature, so the service provider will 
 Publish the configuration file to customize your icon sets:
 
 ```bash
-php artisan vendor:publish --tag=custom-icons-config
+php artisan vendor:publish --tag=artisanpack-package-config
 ```
 
-This creates `config/custom-icons.php` where you can register your icon sets.
+This creates `config/artisanpack/icons.php` where you can register your icon sets.
 
 ## Step 3: Configure Your Icon Sets
 
-Edit `config/custom-icons.php` to register your icon sets:
+Edit `config/artisanpack/icons.php` to register your icon sets:
 
 ```php
 <?php
@@ -114,7 +114,7 @@ To verify your installation is working correctly:
 
 1. **Check the configuration is published:**
    ```bash
-   ls -la config/custom-icons.php
+   ls -la config/artisanpack/icons.php
    ```
 
 2. **Test an icon in a Blade view:**

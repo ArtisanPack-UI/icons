@@ -9,14 +9,14 @@ This guide is designed for third-party package developers who want to integrate 
 ## Overview
 
 The ArtisanPack UI Icons package provides a dual registration system:
-1. **Config-based registration** - Users configure icon sets in `config/custom-icons.php`
+1. **Config-based registration** - Users configure icon sets in `config/artisanpack/icons.php`
 2. **Event-driven registration** - Packages register icon sets programmatically via filter hooks
 
 The event-driven system is perfect for packages that want to bundle their own icon sets and register them automatically when installed.
 
-## The `artisanpack-ui-icons.register-icon-sets` Filter Hook
+## The `ap.icons.register-icon-sets` Filter Hook
 
-The primary extension point is the `artisanpack-ui-icons.register-icon-sets` filter hook. This hook allows packages to register icon sets that will be merged with user-configured sets.
+The primary extension point is the `ap.icons.register-icon-sets` filter hook. This hook allows packages to register icon sets that will be merged with user-configured sets.
 
 ### Basic Usage
 
@@ -24,7 +24,7 @@ The primary extension point is the `artisanpack-ui-icons.register-icon-sets` fil
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
 
 // In your package's service provider boot() method
-add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
     $sets[] = new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons',
         prefix: 'mypackage'
@@ -102,7 +102,7 @@ class MyPackageServiceProvider extends ServiceProvider
     public function boot()
     {
         // Register your package's icon set
-        add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+        Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
             $sets[] = new IconSetRegistration(
                 path: __DIR__ . '/../../resources/icons',
                 prefix: 'mypackage'
@@ -121,7 +121,7 @@ For packages that provide multiple themed icon sets:
 ```php
 public function boot()
 {
-    add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
         // Register multiple themed icon sets
         $iconSets = [
             ['path' => __DIR__ . '/../../resources/icons/admin', 'prefix' => 'admin'],
@@ -148,7 +148,7 @@ Register icon sets based on configuration or environment:
 ```php
 public function boot()
 {
-    add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
         // Only register if the package is configured to provide icons
         if (config('mypackage.provide_icons', true)) {
             $sets[] = new IconSetRegistration(
@@ -177,7 +177,7 @@ Handle different installation contexts:
 ```php
 public function boot()
 {
-    add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
         // Resolve path based on package installation location
         $iconPath = $this->resolveIconPath();
         
@@ -218,7 +218,7 @@ private function resolveIconPath(): ?string
 ```php
 public function boot()
 {
-    add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
         try {
             $iconPath = __DIR__ . '/../../resources/icons';
             
@@ -257,7 +257,7 @@ If registration order matters, you can use priority parameters:
 
 ```php
 // Register with high priority (early registration)
-add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
     // Critical system icons registered first
     array_unshift($sets, new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons/critical',
@@ -268,7 +268,7 @@ add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
 }, 5); // Lower number = higher priority
 
 // Register with normal priority
-add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
     $sets[] = new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons',
         prefix: 'mypackage'
@@ -306,7 +306,7 @@ $sets[] = new IconSetRegistration(
 #### Check for Existing Prefixes
 
 ```php
-add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
     // Check if our preferred prefix is already in use
     $existingPrefixes = array_column($sets, 'prefix');
     
@@ -404,7 +404,7 @@ class IconRegistrationTest extends TestCase
     {
         // Simulate the filter hook
         $sets = [];
-        $sets = apply_filters('artisanpack-ui-icons.register-icon-sets', $sets);
+        $sets = apply_filters('ap.icons.register-icon-sets', $sets);
         
         // Assert your package's icon set is registered
         $prefixes = array_column($sets, 'prefix');
@@ -472,7 +472,7 @@ public function test_package_icons_render_in_blade()
 Add debugging to your registration:
 
 ```php
-add_filter('artisanpack-ui-icons.register-icon-sets', function ($sets) {
+Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
     if (app()->environment('local')) {
         \Log::debug('MyPackage registering icons', [
             'path' => __DIR__ . '/../../resources/icons',
