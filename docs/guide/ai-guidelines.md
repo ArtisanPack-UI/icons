@@ -18,9 +18,9 @@ title: AI Guidelines
 
 ### Specific Instructions for the AI:
 
-When adding an icon to a Blade view, use the `<x-icon-[prefix]-[name] />` syntax provided by the package (e.g., `<x-icon-fa-home />`, `<x-icon-hero-user />`).
+When adding an icon to a Blade view, use the `<x-icon-[prefix]-[name] />` syntax provided by the package (e.g., `<x-icon-fas-home />`, `<x-icon-heroicon-user />`).
 
-If a user requests a custom icon, generate the SVG file and provide instructions on how to register it as a custom icon set in the `config/custom-icons.php` configuration file with an appropriate prefix.
+If a user requests a custom icon, generate the SVG file and provide instructions on how to register it as a custom icon set in the `config/artisanpack.php` configuration file, under the `icons.sets` key, with an appropriate prefix.
 
 When generating UI components that include icons, include attributes for customizing the icon's CSS classes, size, and styling while respecting the prefix-based naming convention.
 

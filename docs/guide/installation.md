@@ -9,7 +9,7 @@ This guide will walk you through installing and setting up the ArtisanPack UI Ic
 ## Requirements
 
 - PHP 8.2 or higher
-- Laravel 10.0 or higher
+- Laravel 12.0 or higher
 - `blade-ui-kit/blade-icons` ^1.8
 - Composer
 

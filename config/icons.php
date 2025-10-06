@@ -15,7 +15,7 @@
  */
 return [
 
-	/*
+    /*
     |--------------------------------------------------------------------------
     | Default Icon Set
     |--------------------------------------------------------------------------
@@ -38,6 +38,22 @@ return [
 	*/
 	'sets' => [
 
+        /*
+        |--------------------------------------------------------------------------
+        | Example: Heroicons (The Default Set)
+        |--------------------------------------------------------------------------
+        |
+        | To use the default set, uncomment the following lines and place your
+        | Heroicon SVG files in the specified path.
+        |
+        | Usage: <x-artisanpack-icon name="home" />
+        |
+        */
+        // 'heroicon' => [
+        //     'path' => resource_path('icons/heroicons'),
+        //     'prefix' => 'heroicon',
+        // ],
+
 		/*
 		|--------------------------------------------------------------------------
 		| Example: Font Awesome Pro
@@ -48,12 +64,15 @@ return [
 		*/
 		// 'fas' => [
 		//     'path' => resource_path('icons/fontawesome/solid'),
+        //     'prefix' => 'fas',
 		// ],
 		// 'far' => [
 		//     'path' => resource_path('icons/fontawesome/regular'),
+        //     'prefix' => 'far',
 		// ],
 		// 'fal' => [
 		//     'path' => resource_path('icons/fontawesome/light'),
+        //     'prefix' => 'fal',
 		// ],
 
 	],

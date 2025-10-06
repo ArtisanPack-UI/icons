@@ -30,7 +30,7 @@ ArtisanPack UI Icons v2.0 represents a fundamental architectural shift from a ha
 - **Community Outreach**: Reminders about migration timeline
 - **Support Transition**: Reduced v1.x support to security-only
 
-### Phase 4: End of Life (January 1, 2026)
+### Phase 4: End of Life (January 1, 2027)
 - **v1.x EOL**: Official end of life for v1.x
 - **No Further Updates**: No bug fixes, security patches, or support
 - **Archive Status**: v1.x moved to archived/legacy status
@@ -183,7 +183,7 @@ For organizations requiring additional migration assistance:
 - 📅 Composer installation warnings active
 - 📅 Documentation archived
 
-### January 1, 2026
+### January 1, 2027
 - 📅 v1.x end of life
 - 📅 Repository archived/read-only
 - 📅 Support channels closed for v1.x
