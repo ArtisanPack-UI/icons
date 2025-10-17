@@ -164,7 +164,7 @@ return [
 
 ```php
 // In a package service provider
-Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
+addFilter('ap.icons.register-icon-sets', function ($sets) {
     $sets[] = new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons',
         prefix: 'mypackage'
@@ -444,7 +444,7 @@ foreach (config('artisanpack.icons.sets') as $set) {
 
 ```php
 // Debug event-driven registration
-Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
     $beforeCount = count($registry->getSets());
     \Log::debug('MyPackage registering icons', [
         'path' => __DIR__ . '/../../resources/icons',

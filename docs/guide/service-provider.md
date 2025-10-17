@@ -93,7 +93,7 @@ Icon sets registered by third-party packages via the `ap.icons.register-icon-set
 
 ```php
 // In a package service provider
-Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
+addFilter('ap.icons.register-icon-sets', function ($sets) {
     $sets[] = new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons',
         prefix: 'mypackage'
@@ -198,7 +198,7 @@ The service provider enables seamless integration with third-party packages thro
 // In MyPackageServiceProvider
 public function boot()
 {
-    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
+    addFilter('ap.icons.register-icon-sets', function ($sets) {
         if ($this->shouldProvideIcons()) {
             $sets[] = [
                 'path' => __DIR__ . '/../../resources/icons',
@@ -245,7 +245,7 @@ Enable debugging in local development:
 ```php
 // In a service provider or AppServiceProvider
 if (app()->environment('local')) {
-    Eventy::addFilter('ap.icons.register-icon-sets', function ($sets) {
+    addFilter('ap.icons.register-icon-sets', function ($sets) {
         \Log::debug('Custom Icons: Event-driven sets', ['count' => count($sets)]);
         return $sets;
     });
