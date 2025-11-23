@@ -29,7 +29,7 @@ build:vendors:
         - composer.lock
       prefix: v1
     policy: pull-push
-  image: composer:2
+  image: composer:2.8-php8.2
   script:
     - echo "Forcing a clean vendor directory..."
     - rm -rf vendor
