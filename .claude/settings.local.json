@@ -3,7 +3,8 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(git checkout:*)",
-      "Bash(composer update:*)"
+      "Bash(composer update:*)",
+      "Bash(./vendor/bin/pest:*)"
     ],
     "deny": [],
     "ask": []

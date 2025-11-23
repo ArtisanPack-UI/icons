@@ -16,7 +16,6 @@ use ArtisanPackUI\Icons\Registries\IconSetRegistration;
 use BladeUI\Icons\Factory;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
-use TorMorten\Eventy\Facades\Eventy;
 
 /**
  * Registers and bootstraps the Icons package services.

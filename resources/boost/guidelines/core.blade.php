@@ -49,10 +49,9 @@ Third-party packages can register icon sets programmatically via the `ap.icons.r
 @verbatim
 <code-snippet name="Registering Icon Sets via Events" lang="php">
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
-use TorMorten\Eventy\Facades\Eventy;
 
 // In a service provider's boot() method
-Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
     $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
     return $registry;
 });

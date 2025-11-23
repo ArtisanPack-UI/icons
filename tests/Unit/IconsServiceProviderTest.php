@@ -7,7 +7,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use TorMorten\Eventy\Facades\Eventy;
 
 function createProviderTestDirectories(): void
 {

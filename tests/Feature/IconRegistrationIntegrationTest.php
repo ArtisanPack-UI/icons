@@ -5,7 +5,6 @@ use BladeUI\Icons\Factory;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use TorMorten\Eventy\Facades\Eventy;
 
 function createIntegrationIconsStructure(): void
 {

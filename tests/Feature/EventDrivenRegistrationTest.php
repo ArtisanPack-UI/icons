@@ -3,7 +3,6 @@
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use TorMorten\Eventy\Facades\Eventy;
 
 function createEventTestDirectories(): void
 {
