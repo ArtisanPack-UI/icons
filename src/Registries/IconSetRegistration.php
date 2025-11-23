@@ -21,7 +21,7 @@ use InvalidArgumentException;
  *
  * This class offers a fluent interface for adding icon sets, ensuring that
  * required parameters like path and prefix are validated before registration.
- * An instance of this class is passed through the Eventy filter.
+ * An instance of this class is passed through the filter hook.
  *
  * @since 2.0.0
  */

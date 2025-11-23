@@ -16,7 +16,6 @@ use ArtisanPackUI\Icons\Registries\IconSetRegistration;
 use BladeUI\Icons\Factory;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
-use TorMorten\Eventy\Facades\Eventy;
 
 /**
  * Registers and bootstraps the Icons package services.
@@ -109,7 +108,7 @@ class IconsServiceProvider extends ServiceProvider
 
 			// Get icon sets registered via events.
 			$eventRegistry = new IconSetRegistration();
-			$eventRegistry = Eventy::filter('ap.icons.register-icon-sets', $eventRegistry);
+			$eventRegistry = applyFilters('ap.icons.register-icon-sets', $eventRegistry);
 			$eventSets = $eventRegistry->getSets();
 
 

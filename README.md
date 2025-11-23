@@ -100,14 +100,12 @@ Perfect for packages that want to register their own icon sets:
 
 ```php
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
-use TorMorten\Eventy\Facades\Eventy;
 
 // In a service provider or event listener
-Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
     $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
     return $registry;
 });
-
 ```
 
 ## Documentation
