@@ -1,5 +1,75 @@
 # ArtisanPack UI Icon Changelog
 
+## 2.1.0 - 2025-11-22
+
+### 🚨 Breaking Changes
+
+#### Hooks Package Migration
+- **CHANGED**: Migrated from `tormjens/eventy` to `artisanpack-ui/hooks` for event/filter management
+- **CHANGED**: Filter syntax updated from `Eventy::addFilter()` to `addFilter()` global helper
+- **REMOVED**: Dependency on `tormjens/eventy` package
+- **ADDED**: Dependency on `artisanpack-ui/hooks` ^1.0
+
+**Migration Guide:**
+```php
+// Before (v2.0)
+use TorMorten\Eventy\Facades\Eventy;
+
+Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
+    return $registry;
+});
+
+// After (v2.1)
+use ArtisanPackUI\Icons\Registries\IconSetRegistration;
+
+addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
+    return $registry;
+});
+```
+
+### ✨ New Features
+
+#### Laravel Boost Integration
+- **NEW**: Added AI guidelines for Laravel Boost at `resources/boost/guidelines/core.blade.php`
+- **NEW**: Automatic guideline loading when users run `php artisan boost:install`
+- Provides AI-powered code generation support for icon registration and usage
+
+#### Developer Experience
+- **NEW**: Added Claude Code settings (`.claude/settings.local.json`) for improved AI-assisted development
+- **NEW**: Pre-configured permissions for common development tasks (mkdir, git checkout, composer, tests)
+
+### 🔧 Improvements
+
+#### CI/CD Pipeline
+- **FIXED**: GitLab CI build stage now uses `php:8.2-cli` image instead of `composer:2`
+- **FIXED**: Resolved PHP version compatibility issues (locked dependencies support PHP 8.2-8.4)
+- **IMPROVED**: More reliable dependency installation in CI environment
+
+#### Documentation
+- **UPDATED**: All documentation examples migrated to new `addFilter()` syntax
+- **UPDATED**: README.md with correct hooks usage
+- **UPDATED**: Extension API documentation (`docs/guide/extension-api.md`)
+- **UPDATED**: Architecture documentation (`docs/guide/architecture.md`)
+- **UPDATED**: Service Provider documentation (`docs/guide/service-provider.md`)
+
+### 🐛 Bug Fixes
+- Fixed all test suite compatibility with new hooks package (39 tests passing)
+- Removed unused Eventy imports from test files
+- Updated TestCase to use `HooksServiceProvider` instead of `EventServiceProvider`
+
+### 📦 Dependencies
+- Replaced `tormjens/eventy: ^0.9.4` with `artisanpack-ui/hooks: ^1.0`
+- All other dependencies remain unchanged
+
+### 🔄 Upgrade Path
+1. Update your `composer.json` to require `artisanpack-ui/hooks: ^1.0` instead of `tormjens/eventy`
+2. Run `composer update`
+3. Update any custom code using `Eventy::addFilter()` to use `addFilter()` global helper
+4. Remove any `use TorMorten\Eventy\Facades\Eventy;` imports
+5. Test your icon registrations work correctly
+
 ## 2.0.0 - 2025-10-06
 
 ### 🚨 MAJOR BREAKING CHANGES

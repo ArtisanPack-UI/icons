@@ -2,7 +2,99 @@
 title: Migration Guide
 ---
 
-# Migration Guide: v1.x to v2.0
+# Migration Guide
+
+## v2.0 to v2.1
+
+This guide will help you migrate from v2.0 to v2.1. The v2.1 release migrates from the `tormjens/eventy` package to the new `artisanpack-ui/hooks` package for event/filter management.
+
+### Overview of Changes
+
+The main change in v2.1 is the replacement of the `tormjens/eventy` package with `artisanpack-ui/hooks`. This affects how third-party packages register icon sets programmatically.
+
+### Breaking Changes
+
+#### Event/Filter Package Migration
+
+- **Removed**: `tormjens/eventy` dependency
+- **Added**: `artisanpack-ui/hooks` ^1.0 dependency
+- **Changed**: Filter syntax from `Eventy::addFilter()` to `addFilter()` global helper
+
+### Migration Steps
+
+#### Step 1: Update Dependencies
+
+Update your `composer.json`:
+
+```json
+{
+    "require": {
+        "artisanpack-ui/icons": "^2.1"
+    }
+}
+```
+
+Run the update:
+```bash
+composer update artisanpack-ui/icons
+```
+
+#### Step 2: Update Filter Registration Code
+
+If you have any packages that register icon sets programmatically, update the filter syntax:
+
+**Before (v2.0):**
+```php
+use TorMorten\Eventy\Facades\Eventy;
+use ArtisanPackUI\Icons\Registries\IconSetRegistration;
+
+// In your service provider
+Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
+    return $registry;
+});
+```
+
+**After (v2.1):**
+```php
+use ArtisanPackUI\Icons\Registries\IconSetRegistration;
+
+// In your service provider - no Eventy import needed
+addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
+    return $registry;
+});
+```
+
+#### Step 3: Remove Eventy Imports
+
+Remove any `use TorMorten\Eventy\Facades\Eventy;` imports from your files.
+
+#### Step 4: Test Your Icon Registrations
+
+Verify that your icon sets are still registered correctly:
+
+```bash
+php artisan tinker
+>>> app(BladeUI\Icons\Factory::class)->all()
+```
+
+### What Stays the Same
+
+- Configuration file format (`config/artisanpack/icons.php`) remains unchanged
+- Blade component usage (`<x-icon-prefix-name />`) remains unchanged
+- Icon set registration via config remains unchanged
+- All other functionality remains unchanged
+
+### Benefits of Migration
+
+- **Better Laravel Integration**: The `artisanpack-ui/hooks` package is purpose-built for Laravel
+- **Consistent API**: Uses the same hooks system across all ArtisanPack UI packages
+- **Active Maintenance**: Maintained by the ArtisanPack team
+
+---
+
+## v1.x to v2.0
 
 This guide will help you migrate from ArtisanPack UI Icons v1.x to v2.0. The v2.0 release represents a fundamental architectural change from a hardcoded icon provider to an extensibility layer for custom icon sets.
 
