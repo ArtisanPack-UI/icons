@@ -45,7 +45,7 @@ beforeEach(function () {
     $this->serviceProvider = new IconsServiceProvider($this->app);
     
     // Clear any existing filters
-    Eventy::removeAllFilters('ap.icons.register-icon-sets');
+    removeAllFilters('ap.icons.register-icon-sets');
     
     // Create test directories
     createProviderTestDirectories();
@@ -56,7 +56,7 @@ afterEach(function () {
     cleanupProviderTestDirectories();
     
     // Clear filters
-    Eventy::removeAllFilters('ap.icons.register-icon-sets');
+    removeAllFilters('ap.icons.register-icon-sets');
     
     // Clean up published config
     $configPath = config_path('artisanpack/icons.php');
@@ -148,7 +148,7 @@ test('it registers config based icon sets with factory', function () {
 
 test('it registers event driven icon sets with factory', function () {
     // Add event-driven icon set
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('test-provider-icons-1'), 'event');
         
         return $registry;
@@ -178,7 +178,7 @@ test('it merges config and event icon sets correctly', function () {
     ]);
     
     // Add event-driven icon sets
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('test-provider-icons-1'), 'event');
         
         // This should be overridden by config
@@ -260,13 +260,13 @@ test('it handles null configuration gracefully', function () {
 
 test('it integrates with eventy properly', function () {
     // Add multiple filters to test eventy integration
-	Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+	addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
 		$registry->addSet(storage_path('test-provider-icons-1'), 'filter1');
 		return $registry;
     });
 
 
-	Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+	addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
 		$registry->addSet(storage_path('test-provider-icons-2'), 'filter2');
 		return $registry;
     });

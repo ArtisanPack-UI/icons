@@ -39,7 +39,7 @@ function cleanupEventTestDirectories(): void
 
 beforeEach(function () {
     // Clear any existing filters
-    Eventy::removeAllFilters('ap.icons.register-icon-sets');
+    removeAllFilters('ap.icons.register-icon-sets');
     
     // Create test directories
     createEventTestDirectories();
@@ -50,12 +50,12 @@ afterEach(function () {
     cleanupEventTestDirectories();
     
     // Clear filters
-    Eventy::removeAllFilters('ap.icons.register-icon-sets');
+    removeAllFilters('ap.icons.register-icon-sets');
 });
 
 test('it can register icon sets via filter hook', function () {
     // Add a filter to register icon sets
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('test-event-icons-1'), 'event');
         
         return $registry;
@@ -63,7 +63,7 @@ test('it can register icon sets via filter hook', function () {
 
     // Create IconSetRegistration and apply filter
     $registry = new IconSetRegistration();
-    $filteredRegistry = Eventy::filter('ap.icons.register-icon-sets', $registry);
+    $filteredRegistry = applyFilters('ap.icons.register-icon-sets', $registry);
     
     // Assert the registry contains our event-registered set
     $sets = $filteredRegistry->getSets();
@@ -130,19 +130,19 @@ test('it validates icon set parameters', function () {
 
 test('it handles multiple extension registrations', function () {
     // Simulate multiple extensions registering icon sets
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('test-event-icons-1'), 'ext1');
         
         return $registry;
     });
     
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('test-event-icons-2'), 'ext2');
         
         return $registry;
     });
     
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('test-event-icons-3'), 'ext3');
         
         return $registry;
@@ -150,7 +150,7 @@ test('it handles multiple extension registrations', function () {
 
     // Create registry and apply all filters
     $registry = new IconSetRegistration();
-    $filteredRegistry = Eventy::filter('ap.icons.register-icon-sets', $registry);
+    $filteredRegistry = applyFilters('ap.icons.register-icon-sets', $registry);
     
     $sets = $filteredRegistry->getSets();
     
@@ -173,7 +173,7 @@ test('it resolves conflicts between config and event driven sets', function () {
     ]);
     
     // Register event-based icon set with same name
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('test-event-icons-2'), 'event');
         
         return $registry;
@@ -183,7 +183,7 @@ test('it resolves conflicts between config and event driven sets', function () {
     // (Config should take precedence over events based on the merge order)
     
     $registry = new IconSetRegistration();
-    $eventRegistry = Eventy::filter('ap.icons.register-icon-sets', $registry);
+    $eventRegistry = applyFilters('ap.icons.register-icon-sets', $registry);
     $eventSets = $eventRegistry->getSets();
     
     $configSets = config('artisanpack.icons.sets');
@@ -197,13 +197,13 @@ test('it resolves conflicts between config and event driven sets', function () {
 
 test('it handles empty event registrations', function () {
     // Add filter that doesn't register anything
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         // Extension doesn't register any icon sets
         return $registry;
     });
     
     $registry = new IconSetRegistration();
-    $filteredRegistry = Eventy::filter('ap.icons.register-icon-sets', $registry);
+    $filteredRegistry = applyFilters('ap.icons.register-icon-sets', $registry);
     
     $sets = $filteredRegistry->getSets();
     expect($sets)->toBeEmpty();
@@ -211,7 +211,7 @@ test('it handles empty event registrations', function () {
 
 test('it handles invalid event registrations gracefully', function () {
     // Add filter that tries to register invalid data
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         // Try to register valid icon set first
         $registry->addSet(storage_path('test-event-icons-1'), 'valid');
         
@@ -226,7 +226,7 @@ test('it handles invalid event registrations gracefully', function () {
     });
     
     $registry = new IconSetRegistration();
-    $filteredRegistry = Eventy::filter('ap.icons.register-icon-sets', $registry);
+    $filteredRegistry = applyFilters('ap.icons.register-icon-sets', $registry);
     
     $sets = $filteredRegistry->getSets();
     
@@ -236,14 +236,14 @@ test('it handles invalid event registrations gracefully', function () {
 });
 
 test('it preserves icon set metadata', function () {
-    Eventy::addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('test-event-icons-1'), 'meta');
         
         return $registry;
     });
     
     $registry = new IconSetRegistration();
-    $filteredRegistry = Eventy::filter('ap.icons.register-icon-sets', $registry);
+    $filteredRegistry = applyFilters('ap.icons.register-icon-sets', $registry);
     
     $sets = $filteredRegistry->getSets();
     
