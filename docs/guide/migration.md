@@ -505,7 +505,7 @@ If you encounter issues during migration:
 
 After completing your migration:
 
-- Explore [Usage Examples](usage-examples.md) for advanced patterns
-- Review [Architecture Overview](architecture.md) to understand the new system
-- Learn about [Extension API](extension-api.md) if you maintain packages
-- Check [Installation Guide](installation.md) for optimization tips
+- Explore [Usage Examples](Usage-Examples) for advanced patterns
+- Review [Architecture Overview](Architecture) to understand the new system
+- Learn about [Extension API](Extension-Api) if you maintain packages
+- Check [Installation Guide](Installation) for optimization tips

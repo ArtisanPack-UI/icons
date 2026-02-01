@@ -200,7 +200,7 @@ If you get "Component not found" errors:
 
 Now that you have the package installed and configured:
 
-- Explore [Usage Examples](usage-examples.md) for practical implementation patterns
-- Learn about [Extension API](extension-api.md) for programmatic icon registration
-- Review [Architecture Overview](architecture.md) to understand how the system works
-- Check the [Migration Guide](migration.md) if upgrading from v1.x
+- Explore [Usage Examples](Usage-Examples) for practical implementation patterns
+- Learn about [Extension API](Extension-Api) for programmatic icon registration
+- Review [Architecture Overview](Architecture) to understand how the system works
+- Check the [Migration Guide](Migration) if upgrading from v1.x

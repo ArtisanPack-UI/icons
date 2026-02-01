@@ -279,7 +279,7 @@ collect(config('artisanpack.icons.sets'))->each(function ($set) {
 
 ## See Also
 
-- [Installation Guide](installation.md) - Setup and configuration
-- [Extension API](extension-api.md) - Third-party package integration
-- [Architecture Overview](architecture.md) - System design and patterns
-- [Usage Examples](usage-examples.md) - Practical implementation examples
+- [Installation Guide](Installation) - Setup and configuration
+- [Extension API](Extension-Api) - Third-party package integration
+- [Architecture Overview](Architecture) - System design and patterns
+- [Usage Examples](Usage-Examples) - Practical implementation examples

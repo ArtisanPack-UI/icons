@@ -88,15 +88,15 @@ After careful evaluation, we have determined that a v1.9.x bridge version is **n
 ### Documentation Suite
 
 #### Core Guides
-1. **[Migration Guide](migration.md)** - Step-by-step upgrade instructions
-2. **[Architecture Overview](architecture.md)** - Understanding v2.0 design principles
-3. **[Installation Guide](installation.md)** - Fresh v2.0 setup instructions
-4. **[Usage Examples](usage-examples.md)** - Common patterns and recipes
+1. **[Migration Guide](Migration)** - Step-by-step upgrade instructions
+2. **[Architecture Overview](Architecture)** - Understanding v2.0 design principles
+3. **[Installation Guide](Installation)** - Fresh v2.0 setup instructions
+4. **[Usage Examples](Usage-Examples)** - Common patterns and recipes
 
 #### Technical References
-1. **[Extension API](extension-api.md)** - For package developers
-2. **[Configuration Reference](../reference/configuration.md)** - Complete config options
-3. **[Troubleshooting Guide](../reference/troubleshooting.md)** - Common issues and solutions
+1. **[Extension API](Extension-Api)** - For package developers
+2. **[Configuration Reference](Reference-Configuration)** - Complete config options
+3. **[Troubleshooting Guide](Reference-Troubleshooting)** - Common issues and solutions
 
 ### Community Support
 
@@ -222,4 +222,4 @@ The deprecation strategy for ArtisanPack UI Icons v1.x to v2.0 prioritizes user 
 
 The 15-month parallel support period provides adequate time for careful migration planning and execution, while the comprehensive documentation suite ensures users have the resources needed for successful adoption of the new architecture.
 
-For questions about this deprecation strategy or migration assistance, please refer to our [Migration Guide](migration.md) or open an issue in our GitLab repository.
+For questions about this deprecation strategy or migration assistance, please refer to our [Migration Guide](Migration) or open an issue in our GitLab repository.

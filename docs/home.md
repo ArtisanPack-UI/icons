@@ -33,21 +33,21 @@ echo getIcons();
 ## Table of Contents
 
 ### Getting Started
-* [Installation](guide/installation) - Install and configure the package
-* [Usage Examples](guide/usage-examples) - Practical examples and implementation patterns
+* [Installation](Guide-Installation) - Install and configure the package
+* [Usage Examples](Guide-Usage-Examples) - Practical examples and implementation patterns
 
 ### Integration Guides
-* [Blade Directives](guide/blade-directives) - Using Blade directives in templates
-* [Service Provider](guide/service-provider) - Understanding the service provider functionality
-* [Asset Management](guide/asset-management) - Managing icons assets and optimization
+* [Blade Directives](Guide-Blade-Directives) - Using Blade directives in templates
+* [Service Provider](Guide-Service-Provider) - Understanding the service provider functionality
+* [Asset Management](Guide-Asset-Management) - Managing icons assets and optimization
 
 ### API Reference
-* [Functions](reference/functions) - Core class methods and their parameters
-* [Helper Functions](reference/helper-functions) - Global helper functions and usage
+* [Functions](Reference-Functions) - Core class methods and their parameters
+* [Helper Functions](Reference-Helper-Functions) - Global helper functions and usage
 
 ### Development
-* [AI Guidelines](guide/ai-guidelines) - Guidelines for AI-assisted development with icons
+* [AI Guidelines](Guide-Ai-Guidelines) - Guidelines for AI-assisted development with icons
 
 ### Browse by Section
-* [Guide](guide) - Comprehensive guides for getting started and implementation
-* [Reference](reference) - Technical API reference documentation
+* [Guide](Guide) - Comprehensive guides for getting started and implementation
+* [Reference](Reference) - Technical API reference documentation

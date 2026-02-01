@@ -485,7 +485,7 @@ addFilter('ap.icons.register-icon-sets', function ($sets) {
 
 ## Next Steps
 
-- Review [Architecture Overview](architecture.md) to understand the complete system
-- Check [Usage Examples](usage-examples.md) for implementation patterns
-- See [Migration Guide](migration.md) for upgrading considerations
-- Learn about [Service Provider](service-provider.md) integration details
+- Review [Architecture Overview](Architecture) to understand the complete system
+- Check [Usage Examples](Usage-Examples) for implementation patterns
+- See [Migration Guide](Migration) for upgrading considerations
+- Learn about [Service Provider](Service-Provider) integration details

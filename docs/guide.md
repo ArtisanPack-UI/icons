@@ -8,15 +8,15 @@ This section contains comprehensive guides for getting started with and using th
 
 ## Getting Started
 
-- [Installation](guide/installation) - Install and configure the package
-- [Usage Examples](guide/usage-examples) - Practical examples and implementation patterns
+- [Installation](Guide-Installation) - Install and configure the package
+- [Usage Examples](Guide-Usage-Examples) - Practical examples and implementation patterns
 
 ## Integration
 
-- [Blade Directives](guide/blade-directives) - Using Blade directives in templates
-- [Service Provider](guide/service-provider) - Understanding the service provider functionality
-- [Asset Management](guide/asset-management) - Managing icons assets and optimization
+- [Blade Directives](Guide-Blade-Directives) - Using Blade directives in templates
+- [Service Provider](Guide-Service-Provider) - Understanding the service provider functionality
+- [Asset Management](Guide-Asset-Management) - Managing icons assets and optimization
 
 ## Development
 
-- [AI Guidelines](guide/ai-guidelines) - Guidelines for AI-assisted development with icons
+- [AI Guidelines](Guide-Ai-Guidelines) - Guidelines for AI-assisted development with icons

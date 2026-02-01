@@ -482,7 +482,7 @@ addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry
 
 ## Next Steps
 
-- Review [Installation Guide](installation.md) for setup instructions
-- Explore [Usage Examples](usage-examples.md) for practical patterns
-- Learn [Extension API](extension-api.md) for package integration
-- Check [Migration Guide](migration.md) for v1.x upgrade path
+- Review [Installation Guide](Installation) for setup instructions
+- Explore [Usage Examples](Usage-Examples) for practical patterns
+- Learn [Extension API](Extension-Api) for package integration
+- Check [Migration Guide](Migration) for v1.x upgrade path

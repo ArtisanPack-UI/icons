@@ -402,7 +402,7 @@ Usage:
 
 ## Next Steps
 
-- Explore [Extension API](extension-api.md) for programmatic icon registration
-- Review [Architecture Overview](architecture.md) to understand the underlying system
-- Check [Migration Guide](migration.md) if upgrading from v1.x
-- Learn about [Service Provider](service-provider.md) integration details
+- Explore [Extension API](Extension-Api) for programmatic icon registration
+- Review [Architecture Overview](Architecture) to understand the underlying system
+- Check [Migration Guide](Migration) if upgrading from v1.x
+- Learn about [Service Provider](Service-Provider) integration details
