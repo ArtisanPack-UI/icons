@@ -125,8 +125,8 @@ For comprehensive documentation, visit the [docs](docs) directory:
 
 ## Requirements
 
-- PHP 8.2 or higher
-- Laravel 12.0 or higher
+- PHP 8.2 or higher (PHP 8.3+ required for Laravel 13)
+- Laravel 12.x or 13.x
 - `blade-ui-kit/blade-icons` ^1.8
 
 ## Contributing
