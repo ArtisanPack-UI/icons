@@ -8,11 +8,11 @@ use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
-	protected function getPackageProviders( $app )
-	{
-		return [
-			IconsServiceProvider::class,
-			HooksServiceProvider::class,
-		];
-	}
+    protected function getPackageProviders($app)
+    {
+        return [
+            IconsServiceProvider::class,
+            HooksServiceProvider::class,
+        ];
+    }
 }

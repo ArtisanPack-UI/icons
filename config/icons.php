@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ArtisanPack UI - Icons Configuration
  *
@@ -9,8 +10,6 @@
  * and the 'path' is the absolute path to the directory containing the raw SVG files.
  *
  * @link       https://gitlab.com/jacob-martella-web-design/artisanpack-ui/artisanpack-ui-icons
- *
- * @package    ArtisanPackUI\Icons
  * @since      2.0.0
  */
 return [
@@ -24,19 +23,19 @@ return [
     | by UI components when a prefix is not explicitly provided.
     |
     */
-	'default_set' => 'heroicon',
+    'default_set' => 'heroicon',
 
-	/*
-	|--------------------------------------------------------------------------
-	| Icon Sets
-	|--------------------------------------------------------------------------
-	|
-	| Here you can register one or more icon sets. Each set should be defined
-	| by a unique key that acts as its prefix. The value should be an array
-	| containing the 'path' to the directory of SVG icons.
-	|
-	*/
-	'sets' => [
+    /*
+    |--------------------------------------------------------------------------
+    | Icon Sets
+    |--------------------------------------------------------------------------
+    |
+    | Here you can register one or more icon sets. Each set should be defined
+    | by a unique key that acts as its prefix. The value should be an array
+    | containing the 'path' to the directory of SVG icons.
+    |
+    */
+    'sets' => [
 
         /*
         |--------------------------------------------------------------------------
@@ -54,27 +53,27 @@ return [
         //     'prefix' => 'heroicon',
         // ],
 
-		/*
-		|--------------------------------------------------------------------------
-		| Example: Font Awesome Pro
-		|--------------------------------------------------------------------------
-		|
-		| Usage: <x-icon-fas-user />, <x-icon-far-heart />, <x-icon-fal-lightbulb />
-		|
-		*/
-		// 'fas' => [
-		//     'path' => resource_path('icons/fontawesome/solid'),
+        /*
+        |--------------------------------------------------------------------------
+        | Example: Font Awesome Pro
+        |--------------------------------------------------------------------------
+        |
+        | Usage: <x-icon-fas-user />, <x-icon-far-heart />, <x-icon-fal-lightbulb />
+        |
+        */
+        // 'fas' => [
+        //     'path' => resource_path('icons/fontawesome/solid'),
         //     'prefix' => 'fas',
-		// ],
-		// 'far' => [
-		//     'path' => resource_path('icons/fontawesome/regular'),
+        // ],
+        // 'far' => [
+        //     'path' => resource_path('icons/fontawesome/regular'),
         //     'prefix' => 'far',
-		// ],
-		// 'fal' => [
-		//     'path' => resource_path('icons/fontawesome/light'),
+        // ],
+        // 'fal' => [
+        //     'path' => resource_path('icons/fontawesome/light'),
         //     'prefix' => 'fal',
-		// ],
+        // ],
 
-	],
+    ],
 
 ];

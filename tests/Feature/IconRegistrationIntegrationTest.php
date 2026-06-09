@@ -2,7 +2,6 @@
 
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
 use BladeUI\Icons\Factory;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
@@ -13,15 +12,15 @@ function createIntegrationIconsStructure(): void
         'integration-icons-event',
         'integration-icons-third-party',
         'integration-icons-conflict-1',
-        'integration-icons-conflict-2'
+        'integration-icons-conflict-2',
     ];
 
     foreach ($directories as $dir) {
         $fullPath = storage_path($dir);
-        if (!File::exists($fullPath)) {
+        if (! File::exists($fullPath)) {
             File::makeDirectory($fullPath, 0755, true);
         }
-        
+
         // Create sample SVG files
         createIntegrationSampleSvgFiles($fullPath, $dir);
     }
@@ -30,9 +29,9 @@ function createIntegrationIconsStructure(): void
 function createIntegrationSampleSvgFiles(string $path, string $prefix): void
 {
     $svgContent = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>';
-    
+
     $icons = ['check', 'cross', 'star', 'heart'];
-    
+
     foreach ($icons as $icon) {
         File::put("{$path}/{$icon}.svg", $svgContent);
     }
@@ -45,7 +44,7 @@ function cleanupIntegrationIconsStructure(): void
         'integration-icons-event',
         'integration-icons-third-party',
         'integration-icons-conflict-1',
-        'integration-icons-conflict-2'
+        'integration-icons-conflict-2',
     ];
 
     foreach ($directories as $dir) {
@@ -59,7 +58,7 @@ function cleanupIntegrationIconsStructure(): void
 beforeEach(function () {
     // Clear any existing filters
     removeAllFilters('ap.icons.register-icon-sets');
-    
+
     // Create test directories and SVG files
     createIntegrationIconsStructure();
 });
@@ -67,7 +66,7 @@ beforeEach(function () {
 afterEach(function () {
     // Clean up test directories
     cleanupIntegrationIconsStructure();
-    
+
     // Clear filters
     removeAllFilters('ap.icons.register-icon-sets');
 });
@@ -77,8 +76,8 @@ test('it registers and uses icons in blade components from config', function () 
     Config::set('artisanpack.icons.sets', [
         'config-icons' => [
             'path' => storage_path('integration-icons-config'),
-            'prefix' => 'config'
-        ]
+            'prefix' => 'config',
+        ],
     ]);
 
     // Test that configuration is set correctly
@@ -86,7 +85,7 @@ test('it registers and uses icons in blade components from config', function () 
     expect($configSets)->toHaveKey('config-icons')
         ->and($configSets['config-icons']['path'])->toBe(storage_path('integration-icons-config'))
         ->and($configSets['config-icons']['prefix'])->toBe('config');
-    
+
     // Test that the directory exists (created by beforeEach)
     expect(is_dir(storage_path('integration-icons-config')))->toBeTrue();
 });
@@ -96,14 +95,14 @@ test('it registers multiple icon sets from both config and events', function () 
     Config::set('artisanpack.icons.sets', [
         'config-set' => [
             'path' => storage_path('integration-icons-config'),
-            'prefix' => 'config'
-        ]
+            'prefix' => 'config',
+        ],
     ]);
 
     // Set up event-driven icon set
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('integration-icons-event'), 'event');
-        
+
         return $registry;
     });
 
@@ -112,12 +111,12 @@ test('it registers multiple icon sets from both config and events', function () 
     expect($configSets)->toHaveKey('config-set')
         ->and($configSets['config-set']['path'])->toBe(storage_path('integration-icons-config'))
         ->and($configSets['config-set']['prefix'])->toBe('config');
-    
+
     // Test event-driven sets
-    $eventRegistry = new IconSetRegistration();
+    $eventRegistry = new IconSetRegistration;
     $eventRegistry = applyFilters('ap.icons.register-icon-sets', $eventRegistry);
     $eventSets = $eventRegistry->getSets();
-    
+
     expect($eventSets)->toHaveKey('event')
         ->and($eventSets['event']['path'])->toBe(storage_path('integration-icons-event'));
 
@@ -131,26 +130,26 @@ test('it resolves conflicts between icon sets correctly', function () {
     Config::set('artisanpack.icons.sets', [
         'conflict-set' => [
             'path' => storage_path('integration-icons-conflict-1'),
-            'prefix' => 'config-wins'
-        ]
+            'prefix' => 'config-wins',
+        ],
     ]);
 
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('integration-icons-conflict-2'), 'event-loses');
-        
+
         return $registry;
     });
 
     // Simulate service provider merge logic (config takes precedence)
-    $eventRegistry = new IconSetRegistration();
+    $eventRegistry = new IconSetRegistration;
     $eventRegistry = applyFilters('ap.icons.register-icon-sets', $eventRegistry);
     $eventSets = $eventRegistry->getSets();
-    
+
     $configSets = config('artisanpack.icons.sets', []);
-    
+
     // Merge with config taking precedence
     $allSets = array_merge($eventSets, $configSets);
-    
+
     // Verify config set wins the conflict
     expect($allSets['conflict-set']['prefix'])->toBe('config-wins');
     expect($allSets['conflict-set']['path'])->toBe(storage_path('integration-icons-conflict-1'));
@@ -161,20 +160,20 @@ test('it handles missing paths gracefully', function () {
     Config::set('artisanpack.icons.sets', [
         'missing-path' => [
             'path' => '/completely/non/existent/path',
-            'prefix' => 'missing'
+            'prefix' => 'missing',
         ],
         'valid-path' => [
             'path' => storage_path('integration-icons-config'),
-            'prefix' => 'valid'
-        ]
+            'prefix' => 'valid',
+        ],
     ]);
 
     // Test service provider validation logic
     $configSets = config('artisanpack.icons.sets', []);
     $validatedSets = [];
-    
+
     foreach ($configSets as $name => $details) {
-        if (!empty($name) && !empty($details['path']) && is_dir($details['path'])) {
+        if (! empty($name) && ! empty($details['path']) && is_dir($details['path'])) {
             $validatedSets[$name] = $details;
         }
     }
@@ -182,7 +181,7 @@ test('it handles missing paths gracefully', function () {
     // Only valid path should pass validation
     expect($validatedSets)->not->toHaveKey('missing-path')
         ->toHaveKey('valid-path');
-    
+
     // Verify the directories
     expect(is_dir('/completely/non/existent/path'))->toBeFalse();
     expect(is_dir(storage_path('integration-icons-config')))->toBeTrue();
@@ -193,26 +192,26 @@ test('it supports third party extension integration', function () {
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         // Extension 1 - UI Library
         $registry->addSet(storage_path('integration-icons-third-party'), 'ui');
-        
+
         return $registry;
     });
 
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
-        // Extension 2 - E-commerce addon  
+        // Extension 2 - E-commerce addon
         $registry->addSet(storage_path('integration-icons-third-party'), 'shop');
-        
+
         return $registry;
     });
 
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         // Extension 3 - Social media addon
         $registry->addSet(storage_path('integration-icons-third-party'), 'social');
-        
+
         return $registry;
     });
 
     // Apply all filters
-    $eventRegistry = new IconSetRegistration();
+    $eventRegistry = new IconSetRegistration;
     $eventRegistry = applyFilters('ap.icons.register-icon-sets', $eventRegistry);
     $eventSets = $eventRegistry->getSets();
 
@@ -230,30 +229,30 @@ test('it validates extension registrations', function () {
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         // Valid registration should work
         $registry->addSet(storage_path('integration-icons-third-party'), 'valid');
-        
+
         // Invalid registrations should throw exceptions
         try {
             $registry->addSet('', 'invalid-empty-path');
         } catch (InvalidArgumentException $e) {
             // Expected - empty path throws exception
         }
-        
+
         try {
             $registry->addSet(storage_path('integration-icons-third-party'), '');
         } catch (InvalidArgumentException $e) {
             // Expected - empty prefix throws exception
         }
-        
+
         try {
             $registry->addSet('/does/not/exist', 'invalid-bad-path');
         } catch (InvalidArgumentException $e) {
             // Expected - non-existent path throws exception
         }
-        
+
         return $registry;
     });
 
-    $eventRegistry = new IconSetRegistration();
+    $eventRegistry = new IconSetRegistration;
     $eventRegistry = applyFilters('ap.icons.register-icon-sets', $eventRegistry);
     $eventSets = $eventRegistry->getSets();
 
@@ -269,33 +268,33 @@ test('it validates extension registrations', function () {
 
 test('it handles complex multi source registration scenario', function () {
     // Complex scenario with config sets, multiple extensions, conflicts, and validation
-    
+
     // Configuration sets
     Config::set('artisanpack.icons.sets', [
         'app-icons' => [
             'path' => storage_path('integration-icons-config'),
-            'prefix' => 'app'
+            'prefix' => 'app',
         ],
         'shared-name' => [
             'path' => storage_path('integration-icons-conflict-1'),
-            'prefix' => 'config-version'
-        ]
+            'prefix' => 'config-version',
+        ],
     ]);
 
     // Extension 1 - Should not override config
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('integration-icons-event'), 'ext1');
-        
+
         // This should be overridden by config
         $registry->addSet(storage_path('integration-icons-conflict-2'), 'event-version');
-        
+
         return $registry;
     });
 
     // Extension 2 - Additional icons
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('integration-icons-third-party'), 'ext2');
-        
+
         return $registry;
     });
 
@@ -306,30 +305,30 @@ test('it handles complex multi source registration scenario', function () {
         } catch (InvalidArgumentException $e) {
             // Expected - invalid path throws exception
         }
-        
+
         return $registry;
     });
 
     // Test service provider validation logic without Factory instantiation
-    
+
     // Get and validate config sets
     $validatedConfigSets = [];
     $configSets = config('artisanpack.icons.sets', []);
     foreach ($configSets as $name => $details) {
-        if (!empty($name) && !empty($details['path']) && is_dir($details['path'])) {
+        if (! empty($name) && ! empty($details['path']) && is_dir($details['path'])) {
             $validatedConfigSets[$name] = $details;
         }
     }
 
     // Get event sets
-    $eventRegistry = new IconSetRegistration();
+    $eventRegistry = new IconSetRegistration;
     $eventRegistry = applyFilters('ap.icons.register-icon-sets', $eventRegistry);
     $eventSets = $eventRegistry->getSets();
 
     // Validate event sets
     $validatedEventSets = [];
     foreach ($eventSets as $name => $details) {
-        if (!empty($name) && !empty($details['path']) && is_dir($details['path'])) {
+        if (! empty($name) && ! empty($details['path']) && is_dir($details['path'])) {
             $validatedEventSets[$name] = $details;
         }
     }
@@ -343,7 +342,7 @@ test('it handles complex multi source registration scenario', function () {
         ->toHaveKey('ext2')
         ->not->toHaveKey('ext3'); // Invalid path should be filtered out
     expect($allSets)->toHaveKey('shared-name');
-    
+
     // Verify conflict resolution (config should win)
     expect($allSets['shared-name']['prefix'])->toBe('config-version');
     expect($allSets['shared-name']['path'])->toBe(storage_path('integration-icons-conflict-1'));
@@ -353,20 +352,20 @@ test('it preserves additional icon set metadata', function () {
     // Test basic icon set registration (current implementation only stores path)
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('integration-icons-third-party'), 'meta');
-        
+
         return $registry;
     });
 
-    $eventRegistry = new IconSetRegistration();
+    $eventRegistry = new IconSetRegistration;
     $eventRegistry = applyFilters('ap.icons.register-icon-sets', $eventRegistry);
     $eventSets = $eventRegistry->getSets();
 
     $metadataSet = $eventSets['meta'];
-    
+
     // Verify basic data is stored (current implementation only stores path)
     expect($metadataSet)->toHaveKey('path')
         ->and($metadataSet['path'])->toBe(storage_path('integration-icons-third-party'));
-    
+
     // Verify directory exists
     expect(is_dir(storage_path('integration-icons-third-party')))->toBeTrue();
 });
@@ -383,7 +382,7 @@ test('it handles empty extension responses', function () {
         return $registry;
     });
 
-    $eventRegistry = new IconSetRegistration();
+    $eventRegistry = new IconSetRegistration;
     $eventRegistry = applyFilters('ap.icons.register-icon-sets', $eventRegistry);
     $eventSets = $eventRegistry->getSets();
 

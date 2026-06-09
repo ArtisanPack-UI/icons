@@ -1,5 +1,14 @@
 # ArtisanPack UI Icon Changelog
 
+## Unreleased
+
+## 2.1.1 - 2026-06-09
+
+### ✨ New Features
+
+- **ADDED**: Laravel 13 support. The `illuminate/support` constraint is widened to `^12.0 || ^13.0`. Existing Laravel 12 users are unaffected; Laravel 13 requires PHP 8.3+ (enforced by Laravel itself).
+- **ADDED**: `orchestra/testbench` dev dependency widened to `^10.0 || ^11.0` to test against Laravel 13.
+
 ## 2.1.0 - 2025-11-22
 
 ### 🚨 Breaking Changes
