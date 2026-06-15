@@ -55,7 +55,10 @@ class IconSetRegistration
             throw new InvalidArgumentException("Icon set path is not a valid directory: {$path}");
         }
 
-        $this->sets[$prefix] = ['path' => $path];
+        $this->sets[$prefix] = [
+            'path' => $path,
+            'prefix' => $prefix,
+        ];
 
         return $this;
     }
