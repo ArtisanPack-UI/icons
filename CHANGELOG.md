@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+## 2.1.2 - 2026-06-14
+
+### 🐛 Bug Fixes
+
+- **FIXED**: `IconSetRegistration::addSet()` now stores `prefix` alongside `path` in the resulting details array. Previously the stored details were `['path' => ...]` only, which caused `BladeUI\Icons\Factory::add()` to throw `CannotRegisterIconSet::prefixNotDefined` whenever an event-driven icon set was registered. This broke every Blade render of an `<x-...>` component in any consumer app that also had `owenvoke/blade-fontawesome` installed alongside an extension (e.g. `artisanpack-ui/visual-editor` v1.1.0) that uses the `ap.icons.register-icon-sets` filter hook. (#20, #21)
+
+### 🧪 Tests
+
+- **ADDED**: Regression test in `tests/Feature/EventDrivenRegistrationTest.php` that hands the stored details directly to a real `BladeUI\Icons\Factory` instance and asserts `Factory::add()` does not throw.
+- **UPDATED**: "Preserves icon set metadata" tests in `EventDrivenRegistrationTest` and `IconRegistrationIntegrationTest` to assert the new `prefix` key alongside `path`.
+
 ## 2.1.1 - 2026-06-09
 
 ### ✨ New Features

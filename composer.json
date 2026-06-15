@@ -1,7 +1,7 @@
 {
   "name": "artisanpack-ui/icons",
   "description": "An extensibility layer for Blade Icons that enables flexible registration of custom SVG icon sets via config or events.",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "license": "MIT",
   "require": {
     "php": "^8.2",
