@@ -1,6 +1,9 @@
 <?php
 
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
+use BladeUI\Icons\Factory;
+use BladeUI\Icons\IconsManifest;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 
@@ -246,7 +249,34 @@ test('it preserves icon set metadata', function () {
 
     $sets = $filteredRegistry->getSets();
 
-    // The current implementation only stores path, not additional metadata
+    // Stored details must include both 'path' and 'prefix' so they can be
+    // handed directly to BladeUI\Icons\Factory::add() without throwing
+    // CannotRegisterIconSet::prefixNotDefined.
     expect($sets)->toHaveKey('meta')
-        ->and($sets['meta']['path'])->toBe(storage_path('test-event-icons-1'));
+        ->and($sets['meta']['path'])->toBe(storage_path('test-event-icons-1'))
+        ->and($sets['meta']['prefix'])->toBe('meta');
+});
+
+test('it stores the prefix in details so Factory::add does not throw prefixNotDefined', function () {
+    // Regression test for the bug fixed in this commit: previously addSet()
+    // stored only ['path' => ...], which caused BladeUI\Icons\Factory::add()
+    // to throw CannotRegisterIconSet::prefixNotDefined when the icons
+    // service provider tried to register an event-driven icon set.
+    $registry = new IconSetRegistration;
+    $registry->addSet(storage_path('test-event-icons-1'), 'regression');
+
+    $details = $registry->getSets()['regression'];
+
+    // Hand the details straight to a Factory the same way
+    // IconsServiceProvider::registerIconSets() does. This should not throw
+    // BladeUI\Icons\Exceptions\CannotRegisterIconSet::prefixNotDefined.
+    $filesystem = new Filesystem;
+    $factory = new Factory(
+        $filesystem,
+        new IconsManifest($filesystem, storage_path('test-event-icons-manifest.php'))
+    );
+    $factory->add('regression', $details);
+
+    expect($factory->all())->toHaveKey('regression')
+        ->and($factory->all()['regression']['prefix'])->toBe('regression');
 });

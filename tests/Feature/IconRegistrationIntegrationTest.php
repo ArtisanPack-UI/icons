@@ -349,7 +349,8 @@ test('it handles complex multi source registration scenario', function () {
 });
 
 test('it preserves additional icon set metadata', function () {
-    // Test basic icon set registration (current implementation only stores path)
+    // Verify event-driven registration stores both 'path' and 'prefix' in details
+    // so they can be consumed by BladeUI\Icons\Factory::add() directly.
     addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
         $registry->addSet(storage_path('integration-icons-third-party'), 'meta');
 
@@ -362,9 +363,10 @@ test('it preserves additional icon set metadata', function () {
 
     $metadataSet = $eventSets['meta'];
 
-    // Verify basic data is stored (current implementation only stores path)
     expect($metadataSet)->toHaveKey('path')
-        ->and($metadataSet['path'])->toBe(storage_path('integration-icons-third-party'));
+        ->toHaveKey('prefix')
+        ->and($metadataSet['path'])->toBe(storage_path('integration-icons-third-party'))
+        ->and($metadataSet['prefix'])->toBe('meta');
 
     // Verify directory exists
     expect(is_dir(storage_path('integration-icons-third-party')))->toBeTrue();
