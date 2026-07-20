@@ -102,11 +102,13 @@ Perfect for packages that want to register their own icon sets:
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
 
 // In a service provider or event listener
-addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+addFilter('ap.icons.registerIconSets', function (IconSetRegistration $registry) {
     $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
     return $registry;
 });
 ```
+
+> **Note:** In v2.2.0 the hook was renamed from `ap.icons.register-icon-sets` to `ap.icons.registerIconSets` to align with the cross-package hooks naming convention. The old name is registered as a temporary deprecation alias — existing subscribers continue firing but emit an info-level deprecation log. The alias will be removed in the next major release.
 
 ## Documentation
 

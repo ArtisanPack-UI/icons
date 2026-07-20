@@ -13,6 +13,7 @@
 namespace ArtisanPackUI\Icons;
 
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
+use ArtisanPackUI\Icons\Support\HookAliases;
 use BladeUI\Icons\Factory;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
@@ -51,6 +52,8 @@ class IconsServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        HookAliases::register();
+
         $this->mergeConfiguration();
 
         if ($this->app->runningInConsole()) {
@@ -83,7 +86,7 @@ class IconsServiceProvider extends ServiceProvider
      *
      * This method merges icon sets defined in the final `artisanpack.icons`
      * configuration with sets registered by third-party extensions via the
-     * 'ap.icons.register-icon-sets' filter hook.
+     * 'ap.icons.registerIconSets' filter hook.
      *
      * @since 2.0.0
      *
@@ -106,7 +109,7 @@ class IconsServiceProvider extends ServiceProvider
 
             // Get icon sets registered via events.
             $eventRegistry = new IconSetRegistration;
-            $eventRegistry = applyFilters('ap.icons.register-icon-sets', $eventRegistry);
+            $eventRegistry = applyFilters('ap.icons.registerIconSets', $eventRegistry);
             $eventSets = $eventRegistry->getSets();
 
             // Merge sets, with config taking precedence over events.
