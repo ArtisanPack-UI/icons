@@ -14,9 +14,11 @@ The ArtisanPack UI Icons package provides a dual registration system:
 
 The event-driven system is perfect for packages that want to bundle their own icon sets and register them automatically when installed.
 
-## The `ap.icons.register-icon-sets` Filter Hook
+## The `ap.icons.registerIconSets` Filter Hook
 
-The primary extension point is the `ap.icons.register-icon-sets` filter hook. This hook allows packages to register icon sets that will be merged with user-configured sets.
+The primary extension point is the `ap.icons.registerIconSets` filter hook. This hook allows packages to register icon sets that will be merged with user-configured sets.
+
+> **Note:** In v2.2.0 this hook was renamed from `ap.icons.register-icon-sets` to `ap.icons.registerIconSets` to align with the cross-package hooks naming convention. The old name is registered as a temporary deprecation alias — existing subscribers continue firing but emit an info-level deprecation log. The alias will be removed in the next major release. Update your `addFilter()` calls to use the new name.
 
 ### Basic Usage
 
@@ -24,7 +26,7 @@ The primary extension point is the `ap.icons.register-icon-sets` filter hook. Th
 use ArtisanPackUI\Icons\Registries\IconSetRegistration;
 
 // In your package's service provider boot() method
-addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+addFilter('ap.icons.registerIconSets', function (IconSetRegistration $registry) {
     $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
     return $registry;
 });
@@ -97,7 +99,7 @@ class MyPackageServiceProvider extends ServiceProvider
     public function boot()
     {
         // Register your package's icon set
-        addFilter('ap.icons.register-icon-sets', function ($sets) {
+        addFilter('ap.icons.registerIconSets', function ($sets) {
             $sets[] = new IconSetRegistration(
                 path: __DIR__ . '/../../resources/icons',
                 prefix: 'mypackage'
@@ -116,7 +118,7 @@ For packages that provide multiple themed icon sets:
 ```php
 public function boot()
 {
-    addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    addFilter('ap.icons.registerIconSets', function (IconSetRegistration $registry) {
         // Register multiple themed icon sets
         $iconSets = [
             'admin' => __DIR__ . '/../../resources/icons/admin',
@@ -141,7 +143,7 @@ Register icon sets based on configuration or environment:
 ```php
 public function boot()
 {
-    addFilter('ap.icons.register-icon-sets', function ($sets) {
+    addFilter('ap.icons.registerIconSets', function ($sets) {
         // Only register if the package is configured to provide icons
         if (config('mypackage.provide_icons', true)) {
             $sets[] = new IconSetRegistration(
@@ -170,7 +172,7 @@ Handle different installation contexts:
 ```php
 public function boot()
 {
-    addFilter('ap.icons.register-icon-sets', function ($sets) {
+    addFilter('ap.icons.registerIconSets', function ($sets) {
         // Resolve path based on package installation location
         $iconPath = $this->resolveIconPath();
         
@@ -211,7 +213,7 @@ private function resolveIconPath(): ?string
 ```php
 public function boot()
 {
-    addFilter('ap.icons.register-icon-sets', function ($sets) {
+    addFilter('ap.icons.registerIconSets', function ($sets) {
         try {
             $iconPath = __DIR__ . '/../../resources/icons';
             
@@ -250,7 +252,7 @@ If registration order matters, you can use priority parameters:
 
 ```php
 // Register with high priority (early registration)
-addFilter('ap.icons.register-icon-sets', function ($sets) {
+addFilter('ap.icons.registerIconSets', function ($sets) {
     // Critical system icons registered first
     array_unshift($sets, new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons/critical',
@@ -261,7 +263,7 @@ addFilter('ap.icons.register-icon-sets', function ($sets) {
 }, 5); // Lower number = higher priority
 
 // Register with normal priority
-addFilter('ap.icons.register-icon-sets', function ($sets) {
+addFilter('ap.icons.registerIconSets', function ($sets) {
     $sets[] = new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons',
         prefix: 'mypackage'
@@ -299,7 +301,7 @@ $sets[] = new IconSetRegistration(
 #### Check for Existing Prefixes
 
 ```php
-addFilter('ap.icons.register-icon-sets', function ($sets) {
+addFilter('ap.icons.registerIconSets', function ($sets) {
     // Check if our preferred prefix is already in use
     $existingPrefixes = array_column($sets, 'prefix');
     
@@ -397,7 +399,7 @@ class IconRegistrationTest extends TestCase
     {
         // Simulate the filter hook
         $sets = [];
-        $sets = apply_filters('ap.icons.register-icon-sets', $sets);
+        $sets = apply_filters('ap.icons.registerIconSets', $sets);
         
         // Assert your package's icon set is registered
         $prefixes = array_column($sets, 'prefix');
@@ -465,7 +467,7 @@ public function test_package_icons_render_in_blade()
 Add debugging to your registration:
 
 ```php
-addFilter('ap.icons.register-icon-sets', function ($sets) {
+addFilter('ap.icons.registerIconSets', function ($sets) {
     if (app()->environment('local')) {
         \Log::debug('MyPackage registering icons', [
             'path' => __DIR__ . '/../../resources/icons',

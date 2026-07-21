@@ -4,6 +4,71 @@ title: Migration Guide
 
 # Migration Guide
 
+## v2.1 to v2.2
+
+The v2.2 release renames the extension-API filter hook to align with the cross-package hooks naming convention.
+
+### Overview of Changes
+
+- **Renamed**: `ap.icons.register-icon-sets` → `ap.icons.registerIconSets`
+- **Backward Compatible**: The old hook name is registered as a deprecation alias. Existing subscribers continue firing without changes, but each invocation emits an info-level deprecation log. The alias will be removed in the next major release.
+- **Bumped**: `artisanpack-ui/hooks` constraint to `^1.3`.
+
+### Migration Steps
+
+#### Step 1: Update Dependencies
+
+Update your `composer.json`:
+
+```json
+{
+    "require": {
+        "artisanpack-ui/icons": "^2.2"
+    }
+}
+```
+
+Run the update:
+```bash
+composer update artisanpack-ui/icons
+```
+
+#### Step 2: Update Filter Registrations
+
+Rename the hook string in any `addFilter()` / `applyFilters()` calls that target the icon-set registry:
+
+**Before (v2.1):**
+```php
+addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+    $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
+    return $registry;
+});
+```
+
+**After (v2.2):**
+```php
+addFilter('ap.icons.registerIconSets', function (IconSetRegistration $registry) {
+    $registry->addSet(__DIR__ . '/../../resources/icons', 'mypackage');
+    return $registry;
+});
+```
+
+#### Step 3: Silence Deprecation Logs
+
+Once every subscriber has been updated to the new name, the info-level deprecation log entries will stop being emitted. Search your codebase for the legacy string to confirm you've caught them all:
+
+```bash
+grep -r 'ap.icons.register-icon-sets' .
+```
+
+### What Stays the Same
+
+- The `IconSetRegistration` API is unchanged.
+- Config-based icon-set registration is unchanged.
+- Blade component usage (`<x-icon-prefix-name />`) is unchanged.
+
+---
+
 ## v2.0 to v2.1
 
 This guide will help you migrate from v2.0 to v2.1. The v2.1 release migrates from the `tormjens/eventy` package to the new `artisanpack-ui/hooks` package for event/filter management.
