@@ -2,12 +2,17 @@
 
 ## Unreleased
 
-## 2.2.0
+## 2.2.0 - 2026-07-21
 
 ### Changed
 
 - Renamed hook `ap.icons.register-icon-sets` → `ap.icons.registerIconSets` to align with cross-package hooks convention. Old name is registered as a deprecation alias — subscribers continue firing but emit an info-level log. Alias removal deferred to next major.
 - Bumped `artisanpack-ui/hooks` to `^1.3`.
+
+### Documentation
+
+- Updated Extension API, Architecture, and Service Provider guides to reference the new `ap.icons.registerIconSets` hook name with deprecation notes for the legacy alias.
+- Added v2.1 → v2.2 migration section covering the hook rename.
 
 ## 2.1.2 - 2026-06-14
 

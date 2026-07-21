@@ -56,7 +56,7 @@ class IconSetRegistration
         }
 
         $this->sets[$prefix] = [
-            'path' => $path,
+            'path'   => $path,
             'prefix' => $prefix,
         ];
 

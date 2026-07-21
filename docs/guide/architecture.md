@@ -164,7 +164,7 @@ return [
 
 ```php
 // In a package service provider
-addFilter('ap.icons.register-icon-sets', function ($sets) {
+addFilter('ap.icons.registerIconSets', function ($sets) {
     $sets[] = new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons',
         prefix: 'mypackage'
@@ -179,7 +179,7 @@ addFilter('ap.icons.register-icon-sets', function ($sets) {
 protected function collectIconSets(): array
 {
     // 1. Collect event-driven registrations
-    $eventSets = apply_filters('ap.icons.register-icon-sets', []);
+    $eventSets = apply_filters('ap.icons.registerIconSets', []);
     
     // 2. Get config-based registrations
     $configSets = config('artisanpack.icons.sets', []);
@@ -444,7 +444,7 @@ foreach (config('artisanpack.icons.sets') as $set) {
 
 ```php
 // Debug event-driven registration
-addFilter('ap.icons.register-icon-sets', function (IconSetRegistration $registry) {
+addFilter('ap.icons.registerIconSets', function (IconSetRegistration $registry) {
     $beforeCount = count($registry->getSets());
     \Log::debug('MyPackage registering icons', [
         'path' => __DIR__ . '/../../resources/icons',

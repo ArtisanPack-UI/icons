@@ -89,11 +89,11 @@ return [
 
 ### 2. Event-Driven Registration
 
-Icon sets registered by third-party packages via the `ap.icons.register-icon-sets` filter hook:
+Icon sets registered by third-party packages via the `ap.icons.registerIconSets` filter hook:
 
 ```php
 // In a package service provider
-addFilter('ap.icons.register-icon-sets', function ($sets) {
+addFilter('ap.icons.registerIconSets', function ($sets) {
     $sets[] = new IconSetRegistration(
         path: __DIR__ . '/../../resources/icons',
         prefix: 'mypackage'
@@ -114,7 +114,7 @@ protected function registerIconSets()
         $configSets = config('artisanpack.icons.sets', []);
         
         // 2. Get event-driven icon sets
-        $eventSets = apply_filters('ap.icons.register-icon-sets', []);
+        $eventSets = apply_filters('ap.icons.registerIconSets', []);
         
         // 3. Merge sets (config takes precedence)
         $allSets = array_merge($eventSets, $configSets);
@@ -198,7 +198,7 @@ The service provider enables seamless integration with third-party packages thro
 // In MyPackageServiceProvider
 public function boot()
 {
-    addFilter('ap.icons.register-icon-sets', function ($sets) {
+    addFilter('ap.icons.registerIconSets', function ($sets) {
         if ($this->shouldProvideIcons()) {
             $sets[] = [
                 'path' => __DIR__ . '/../../resources/icons',
@@ -245,7 +245,7 @@ Enable debugging in local development:
 ```php
 // In a service provider or AppServiceProvider
 if (app()->environment('local')) {
-    addFilter('ap.icons.register-icon-sets', function ($sets) {
+    addFilter('ap.icons.registerIconSets', function ($sets) {
         \Log::debug('Custom Icons: Event-driven sets', ['count' => count($sets)]);
         return $sets;
     });
